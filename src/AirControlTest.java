@@ -211,4 +211,16 @@ public class AirControlTest extends TestCase {
                 "1 nodes were visited in the bintree\n",
                 w.intersect(1, 1, 1, 1, 1, 1));
     }
+
+    /**
+     * Our tests for code coverage and mutations
+     */
+    public void testCoverage() {
+        WorldDB w = new WorldDB(null);
+        assertFalse(w.add(new AirPlane("", 1, 1, 1000, 1, 1, 1000, "Alaska", 1, 1)));
+        assertNull(w.delete(""));
+        assertNull(w.print(""));
+        assertNull(w.rangeprint("", "end"));
+        assertNull(w.rangeprint("begin", ""));
+    }
 }
