@@ -41,4 +41,15 @@ public class Drone extends AirObject {
         return numEngines;
     }
 
+
+    /**
+     * Return a string representation of the Drone.
+     * 
+     * @return A string representation of the Drone.
+     */
+    @Override
+    public String toString() {
+        return "Drone " + super.toString() + brand + " " + numEngines;
+    }
+
 }

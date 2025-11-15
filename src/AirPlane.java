@@ -56,4 +56,16 @@ public class AirPlane extends AirObject {
     public int getFlightNumber() {
         return flightNumber;
     }
+
+
+    /**
+     * Return a string representation of the Airplane.
+     * 
+     * @return A string representation of the Airplane.
+     */
+    @Override
+    public String toString() {
+        return "Airplane" + super.toString() + airline + " " + flightNumber
+            + " " + numEngines;
+    }
 }

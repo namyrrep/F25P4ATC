@@ -41,4 +41,14 @@ public class Rocket extends AirObject {
     public double getTrajectory() {
         return trajectory;
     }
+    
+    /**
+     * Return a string representation of the Rocket.
+     * 
+     * @return A string representation of the Rocket.
+     */
+    @Override
+    public String toString() {
+        return "Rocket " + super.toString() + ascentRate + " " + trajectory;
+    }
 }

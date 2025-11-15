@@ -108,5 +108,10 @@ public class AirObject {
     public void setZOrg(int zOrg) {
         this.zOrg = zOrg;
     }
+    
+    public String toString() {
+        return name + " " + xOrg + " " + yOrg + " " + zOrg + " "
+            + xWidth + " " + yWidth + " " + zWidth + " ";
+    }
 
 }

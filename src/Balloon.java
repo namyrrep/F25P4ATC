@@ -39,4 +39,14 @@ public class Balloon extends AirObject {
     public int getAscent_Rate() {
         return ascent_Rate;
     }
+    
+    /**
+     * Return a string representation of the Balloon.
+     * 
+     * @return A string representation of the Balloon.
+     */
+    @Override
+    public String toString() {
+        return "Ballon " + super.toString() + type + " " + ascent_Rate;
+    }
 }

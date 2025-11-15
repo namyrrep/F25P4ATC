@@ -39,4 +39,14 @@ public class Bird extends AirObject {
     public int getNumber() {
         return number;
     }
+    
+    /**
+     * Return a string representation of the Bird.
+     * 
+     * @return A string representation of the Bird.
+     */
+    @Override
+    public String toString() {
+        return "Bird " + super.toString() + type + " " + number;
+    }
 }
