@@ -17,7 +17,7 @@ public class SkipList {
 
     // Return the (first) matching matching element if one exists, null
     // otherwise
-    public Object find(Comparable key) {
+    public Object find(Comparable<String> key) {
         SkipNode x = head; // Dummy header node
         for (int i = level; i >= 0; i--) { // For each level...
             while ((x.forward[i] != null) && (x.forward[i].key().compareTo(
@@ -80,6 +80,24 @@ public class SkipList {
         }
         level = newLevel;
     }
+    
+    private class KVPair {
+        private Comparable<String> key;
+        private Object value;
+
+        public KVPair(Comparable<String> k, Object v) {
+            key = k;
+            value = v;
+        }
+        
+        public Comparable<String> key() {
+            return key;
+        }
+        public Object value() {
+            return value;
+        }
+    }
+        
 
     private class SkipNode {
         private KVPair rec;
@@ -90,12 +108,12 @@ public class SkipList {
         }
 
 
-        public Comparable key() {
+        public Comparable<String> key() {
             return rec.key();
         }
 
 
-        public SkipNode(Comparable key, Object elem, int level) {
+        public SkipNode(Comparable<String> key, Object elem, int level) {
             rec = new KVPair(key, elem);
             forward = new SkipNode[level + 1];
             for (int i = 0; i < level; i++) {
