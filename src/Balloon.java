@@ -3,7 +3,7 @@
  */
 public class Balloon extends AirObject {
     private String type;
-    private int ascent_Rate;
+    private int ascentRate;
 
     public Balloon(
         String name,
@@ -17,7 +17,7 @@ public class Balloon extends AirObject {
         int ascent_Rate) {
         super(name, x, y, z, xWidth, yWidth, zWidth);
         this.type = type;
-        this.ascent_Rate = ascent_Rate;
+        this.ascentRate = ascent_Rate;
     }
 
 
@@ -36,8 +36,8 @@ public class Balloon extends AirObject {
      * 
      * @return The ascent rate.
      */
-    public int getAscent_Rate() {
-        return ascent_Rate;
+    public int getAscentRate() {
+        return ascentRate;
     }
     
     /**
@@ -47,6 +47,6 @@ public class Balloon extends AirObject {
      */
     @Override
     public String toString() {
-        return "Ballon " + super.toString() + type + " " + ascent_Rate;
+        return "Ballon " + super.toString() + type + " " + ascentRate;
     }
 }
