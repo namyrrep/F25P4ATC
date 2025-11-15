@@ -1,6 +1,7 @@
 import java.util.Random;
+import java.util.Dictionary;
 
-public class SkipList implements Dictionary {
+public class SkipList {
     private SkipNode head;
     private int level;
     private int size;
