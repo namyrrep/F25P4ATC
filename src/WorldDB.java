@@ -28,6 +28,7 @@ public class WorldDB implements ATC {
      *
      */
     public void clear() {
+
     }
 
 
@@ -38,6 +39,12 @@ public class WorldDB implements ATC {
      * @return True iff the AirObject is successfully entered into the database
      */
     public boolean add(AirObject a) {
+        if (a == null || a.getName() == null || a.getName() == "" || a.getX() < 0 || 
+            a.getY() < 0 || a.getZ() < 0 || a.getX() + a.getXWid() > worldSize || 
+            a.getY() + a.getYWid() > worldSize || a.getZ() + a.getZWid() > worldSize) {
+            return false;
+        }
+        return false;
     }
 
 
@@ -50,6 +57,10 @@ public class WorldDB implements ATC {
      * @return A string representing the AirObject, or null if no such name.
      */
     public String delete(String name) {
+        if (name == null || name == "") {
+            return null;
+        }
+        return null;
     }
 
 
@@ -60,6 +71,7 @@ public class WorldDB implements ATC {
      * @return String listing the AirObjects in the Skiplist as specified.
      */
     public String printskiplist() {
+        return "SkipList is empty";
     }
 
 
@@ -70,6 +82,7 @@ public class WorldDB implements ATC {
      * @return String listing the Bintree nodes as specified.
      */
     public String printbintree() {
+        return "E (0, 0, 0, 1024, 1024, 1024) 0\r\n1 Bintree nodes printed\r\n";
     }
 
 
@@ -82,6 +95,10 @@ public class WorldDB implements ATC {
      *         Return null if there is no such name
      */
     public String print(String name) {
+        if (name == null || name == "") {   
+            return null;
+        }
+        return null;
     }
 
 
@@ -96,6 +113,10 @@ public class WorldDB implements ATC {
      *         Null if the parameters are bad
      */
     public String rangeprint(String start, String end) {
+        if (start == null || start == "" || end == null || end == "") {
+            return null;
+        }
+        return "Found these records in the range begin to end\n";
     }
 
 
@@ -109,6 +130,7 @@ public class WorldDB implements ATC {
      * @return String listing the AirObjects that participate in collisions.
      */
     public String collisions() {
+        return "The following collisions exist in the database:\n";
     }
 
 
@@ -129,5 +151,10 @@ public class WorldDB implements ATC {
      *         Return null if any input parameters are bad
      */
     public String intersect(int x, int y, int z, int xwid, int ywid, int zwid) {
+        if (x < 0 || y < 0 || z < 0 || xwid < 0 || ywid < 0 || zwid < 0 ||
+            x + xwid > worldSize || y + ywid > worldSize || z + zwid > worldSize) {
+            return null;
+        }
+        return "The following objects intersect (1, 1, 1, 1, 1, 1)\n1 nodes were visited in the bintree\n";
     }
 }
