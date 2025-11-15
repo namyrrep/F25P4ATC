@@ -39,9 +39,9 @@ public class WorldDB implements ATC {
      * @return True iff the AirObject is successfully entered into the database
      */
     public boolean add(AirObject a) {
-        if (a == null || a.getName() == null || a.getName() == "" || a.getX() < 0 || 
-            a.getY() < 0 || a.getZ() < 0 || a.getX() + a.getXWid() > worldSize || 
-            a.getY() + a.getYWid() > worldSize || a.getZ() + a.getZWid() > worldSize) {
+        if (a == null || a.getName() == null || a.getName() == "" || a.getXOrg() < 0 || 
+            a.getYOrg() < 0 || a.getZOrg() < 0 || a.getXOrg() + a.getXWidth() > worldSize || 
+            a.getYOrg() + a.getYWidth() > worldSize || a.getZOrg() + a.getZWidth() > worldSize) {
             return false;
         }
         return false;
