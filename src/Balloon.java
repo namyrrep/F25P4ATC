@@ -47,6 +47,6 @@ public class Balloon extends AirObject {
      */
     @Override
     public String toString() {
-        return "Ballon " + super.toString() + type + " " + ascentRate;
+        return "Balloon " + super.toString() + type + " " + ascentRate;
     }
 }

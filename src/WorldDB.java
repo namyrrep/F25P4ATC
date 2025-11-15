@@ -52,22 +52,24 @@ public class WorldDB implements ATC {
                     .getYWidth() > worldSize || a.getZOrg() + a
                         .getZWidth() > worldSize ||
 
-        // ---------- Balloon ----------
+            a.getXWidth() < 0 || a.getYWidth() < 0 || a.getZWidth() < 0 ||
+
+            // ---------- Balloon ----------
             (a instanceof Balloon && (((Balloon)a).getType() == null
                 || ((Balloon)a).getAscentRate() < 0)) ||
 
             // ---------- AirPlane ----------
             (a instanceof AirPlane && (((AirPlane)a).getAirline() == null
-                || ((AirPlane)a).getNumEngines() < 0 || ((AirPlane)a)
-                    .getFlightNumber() < 0)) ||
+                || ((AirPlane)a).getNumEngines() <= 0 || ((AirPlane)a)
+                    .getFlightNumber() <= 0)) ||
 
             // ---------- Drone ----------
             (a instanceof Drone && (((Drone)a).getBrand() == null || ((Drone)a)
-                .getNumEngines() < 0)) ||
+                .getNumEngines() <= 0)) ||
 
             // ---------- Bird ----------
             (a instanceof Bird && (((Bird)a).getType() == null || ((Bird)a)
-                .getNumber() < 0)) ||
+                .getNumber() <= 0)) ||
 
             // ---------- Rocket ----------
             (a instanceof Rocket && (((Rocket)a).getAscentRate() < 0
@@ -75,7 +77,7 @@ public class WorldDB implements ATC {
             return false;
         }
 
-        //skiplist.insert(a);
+        // skiplist.insert(a);
         return true;
 
     }
