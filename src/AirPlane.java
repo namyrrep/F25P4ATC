@@ -65,7 +65,7 @@ public class AirPlane extends AirObject {
      */
     @Override
     public String toString() {
-        return "Airplane" + super.toString() + airline + " " + flightNumber
+        return "Airplane " + super.toString() + airline + " " + flightNumber
             + " " + numEngines;
     }
 }

@@ -9,6 +9,8 @@ import java.util.Random;
 public class WorldDB implements ATC {
     private final int worldSize = 1024;
     private Random rnd;
+    
+    private SkipList<String, AirObject> skiplist = new SkipList<>();
 
     /**
      * Create a brave new World.
@@ -52,7 +54,8 @@ public class WorldDB implements ATC {
                     .getYWidth() > worldSize || a.getZOrg() + a
                         .getZWidth() > worldSize ||
 
-            a.getXWidth() < 0 || a.getYWidth() < 0 || a.getZWidth() < 0 ||
+            // widths must be strictly positive
+            a.getXWidth() <= 0 || a.getYWidth() <= 0 || a.getZWidth() <= 0 ||
 
             // ---------- Balloon ----------
             (a instanceof Balloon && (((Balloon)a).getType() == null
@@ -77,7 +80,7 @@ public class WorldDB implements ATC {
             return false;
         }
 
-        // skiplist.insert(a);
+        skiplist.insert(a.getName(), a);
         return true;
 
     }
@@ -94,7 +97,7 @@ public class WorldDB implements ATC {
      * @return A string representing the AirObject, or null if no such name.
      */
     public String delete(String name) {
-        if (name == null || name == "") {
+        if (name == null || name.isEmpty()) {
             return null;
         }
         return null;
@@ -135,7 +138,7 @@ public class WorldDB implements ATC {
      *         Return null if there is no such name
      */
     public String print(String name) {
-        if (name == null || name == "") {
+        if (name == null || name.isEmpty()) {
             return null;
         }
         return null;
@@ -156,7 +159,10 @@ public class WorldDB implements ATC {
      *         Null if the parameters are bad
      */
     public String rangeprint(String start, String end) {
-        if (start == null || start == "" || end == null || end == "") {
+        if (start == null || start.isEmpty() || end == null || end.isEmpty()) {
+            return null;
+        }
+        if (start.compareTo(end) > 0) {
             return null;
         }
         return "Found these records in the range begin to end\n";
