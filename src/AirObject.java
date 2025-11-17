@@ -5,9 +5,9 @@
 public class AirObject {
     // Fields based on project description
     private String name;
-    private int xOrg;
-    private int yOrg;
-    private int zOrg;
+    private int xOrigin;
+    private int yOrigin;
+    private int zOrigin;
     private int xWidth;
     private int yWidth;
     private int zWidth;
@@ -17,17 +17,17 @@ public class AirObject {
         int xOrg,
         int yOrg,
         int zOrg,
-        int xWidth,
-        int yWidth,
-        int zWidth) {
+        int xWid,
+        int yWid,
+        int zWid) {
 
         this.name = name;
-        this.xOrg = xOrg;
-        this.yOrg = yOrg;
-        this.zOrg = zOrg;
-        this.xWidth = xWidth;
-        this.yWidth = yWidth;
-        this.zWidth = zWidth;
+        this.xOrigin = xOrg;
+        this.yOrigin = yOrg;
+        this.zOrigin = zOrg;
+        this.xWidth = xWid;
+        this.yWidth = yWid;
+        this.zWidth = zWid;
     }
 
     /*
@@ -43,7 +43,7 @@ public class AirObject {
      * @return xOrg
      */
     public int getXOrg() {
-        return xOrg;
+        return xOrigin;
     }
 
     /*
@@ -51,7 +51,7 @@ public class AirObject {
      * @return yOrg
      */
     public int getYOrg() {
-        return yOrg;
+        return yOrigin;
     }
 
     /*
@@ -59,7 +59,7 @@ public class AirObject {
      * @return zOrg
      */
     public int getZOrg() {
-        return zOrg;
+        return zOrigin;
     }
 
     /*
@@ -90,7 +90,7 @@ public class AirObject {
      * @param xOrg
      */
     public void setXOrg(int xOrg) {
-        this.xOrg = xOrg;
+        this.xOrigin = xOrg;
     }
 
     /*
@@ -98,7 +98,7 @@ public class AirObject {
      * @param yOrg
      */
     public void setYOrg(int yOrg) {
-        this.yOrg = yOrg;
+        this.yOrigin = yOrg;
     }
 
     /*
@@ -106,11 +106,11 @@ public class AirObject {
      * @param zOrg
      */
     public void setZOrg(int zOrg) {
-        this.zOrg = zOrg;
+        this.zOrigin = zOrg;
     }
     
     public String toString() {
-        return name + " " + xOrg + " " + yOrg + " " + zOrg + " "
+        return name + " " + xOrigin + " " + yOrigin + " " + zOrigin + " "
             + xWidth + " " + yWidth + " " + zWidth + " ";
     }
 
