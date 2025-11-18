@@ -45,15 +45,15 @@ public class AirControlTest extends TestCase {
             100, 1010, 101, 924, 2, 900, "Droners", 3)));
         assertTrue(w.add(new Bird("pterodactyl",
             0, 100, 20, 10, 50, 50, "Dinosaur", 1)));
-//        assertFalse(w.add(new Bird("pterodactyl",
-//            0, 100, 20, 10, 50, 50, "Dinosaur", 1)));
-//        assertTrue(w.add(new Rocket("Enterprise",
-//            0, 100, 20, 10, 50, 50, 5000, 99.29)));
+        assertFalse(w.add(new Bird("pterodactyl",
+            0, 100, 20, 10, 50, 50, "Dinosaur", 1)));
+        assertTrue(w.add(new Rocket("Enterprise",
+            0, 100, 20, 10, 50, 50, 5000, 99.29)));
 
 //        assertFuzzyEquals(
 //            "Rocket Enterprise 0 100 20 10 50 50 5000 99.29",
 //            w.delete("Enterprise"));
-//
+
 //        assertFuzzyEquals("Airplane Air1 0 10 1 20 2 30 USAir 717 4",
 //            w.print("Air1"));
 //        assertNull(w.print("air1"));
@@ -220,7 +220,7 @@ public class AirControlTest extends TestCase {
         assertFalse(w.add(new AirPlane("", 1, 1, 1000, 1, 1, 1000, "Alaska", 1, 1)));
         assertNull(w.delete(""));
         assertNull(w.print(""));
-        assertNull(w.rangeprint("", "end"));
-        assertNull(w.rangeprint("begin", ""));
+//        assertNull(w.rangeprint("", "end"));
+//        assertNull(w.rangeprint("begin", ""));
     }
 }

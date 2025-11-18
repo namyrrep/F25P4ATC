@@ -79,7 +79,10 @@ public class WorldDB implements ATC {
                 || ((Rocket)a).getTrajectory() < 0))) {
             return false;
         }
-
+        
+        if( skiplist.find(a.getName()) != null) {
+            return false;
+        }
         skiplist.insert(a.getName(), a);
         return true;
 
