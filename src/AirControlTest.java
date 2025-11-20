@@ -50,13 +50,13 @@ public class AirControlTest extends TestCase {
         assertTrue(w.add(new Rocket("Enterprise",
             0, 100, 20, 10, 50, 50, 5000, 99.29)));
 
-//        assertFuzzyEquals(
-//            "Rocket Enterprise 0 100 20 10 50 50 5000 99.29",
-//            w.delete("Enterprise"));
+        assertFuzzyEquals(
+            "Rocket Enterprise 0 100 20 10 50 50 5000 99.29",
+            w.delete("Enterprise"));
 
-//        assertFuzzyEquals("Airplane Air1 0 10 1 20 2 30 USAir 717 4",
-//            w.print("Air1"));
-//        assertNull(w.print("air1"));
+        assertFuzzyEquals("Airplane Air1 0 10 1 20 2 30 USAir 717 4",
+            w.print("Air1"));
+        assertNull(w.print("air1"));
 //
 //        assertFuzzyEquals(
 //            "I (0, 0, 0, 1024, 1024, 1024) 0\r\n"
@@ -72,18 +72,21 @@ public class AirControlTest extends TestCase {
 //                + "5 Bintree nodes printed\r\n",
 //                w.printbintree());
 //
-//        assertFuzzyEquals(
-//            "Node has depth 3, Value (null)\r\n"
-//                + "Node has depth 3, "
-//                + "Value (Airplane Air1 0 10 1 20 2 30 USAir 717 4)\r\n"
-//                + "Node has depth 1, "
-//                + "Value (Drone Air2 100 1010 101 924 2 900 Droners 3)\r\n"
-//                + "Node has depth 2, "
-//                + "Value (Balloon B1 10 11 11 21 12 31 hot_air 15)\r\n"
-//                + "Node has depth 2, "
-//                + "Value (Bird pterodactyl 0 100 20 10 50 50 Dinosaur 1)\r\n"
-//                + "4 skiplist nodes printed\r\n",
-//                w.printskiplist());
+        
+        System.out.println(w.printskiplist());
+        assertFuzzyEquals(
+            "Node has depth 3, Value (null)\r\n"
+                + "Node has depth 3, "
+                + "Value (Airplane Air1 0 10 1 20 2 30 USAir 717 4)\r\n"
+                + "Node has depth 1, "
+                + "Value (Drone Air2 100 1010 101 924 2 900 Droners 3)\r\n"
+                + "Node has depth 2, "
+                + "Value (Balloon B1 10 11 11 21 12 31 hot_air 15)\r\n"
+                + "Node has depth 2, "
+                + "Value (Bird pterodactyl 0 100 20 10 50 50 Dinosaur 1)\r\n"
+                + "4 skiplist nodes printed\r\n",
+                w.printskiplist());
+                
 //
 //        assertFuzzyEquals(
 //            "Found these records in the range a to z\r\n"
@@ -214,8 +217,10 @@ public class AirControlTest extends TestCase {
 
     /**
      * Our tests for code coverage and mutations
+     * 
+     * @throws Exception
      */
-    public void testCoverage() {
+    public void testCoverage() throws Exception {
         WorldDB w = new WorldDB(null);
         assertFalse(w.add(new AirPlane("", 1, 1, 1000, 1, 1, 1000, "Alaska", 1, 1)));
         assertNull(w.delete(""));
@@ -223,4 +228,11 @@ public class AirControlTest extends TestCase {
 //        assertNull(w.rangeprint("", "end"));
 //        assertNull(w.rangeprint("begin", ""));
     }
+    
+    /**
+     * delete test for code coverage
+     * 
+     * @throws Exception
+     */
+    
 }

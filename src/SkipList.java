@@ -4,12 +4,19 @@ class SkipList<K extends Comparable<K>, E> {
     private SkipNode<K, E> head;
     private int level;
     private int size;
-    private final Random ran = new Random(); // Hold the Random class object
+    private final Random ran; // replace inline initialization for seeding
 
-    public SkipList() {
+    public SkipList() { // keep default
         head = new SkipNode<>(null, null, 0);
         level = -1;
         size = 0;
+        ran = new Random();
+    }
+    public SkipList(Random r) { // new constructor for deterministic tests
+        head = new SkipNode<>(null, null, 0);
+        level = -1;
+        size = 0;
+        ran = (r == null) ? new Random() : r;
     }
 
     // Return the (first) matching matching element if one exists, null otherwise
@@ -35,23 +42,62 @@ class SkipList<K extends Comparable<K>, E> {
     /** Insert a key, element pair into the skip list */
     @SuppressWarnings("unchecked")
     public void insert(K key, E elem) {
-        int newLevel = randomLevel(); // New node's level
-        if (newLevel > level) // If new node is deeper
-            adjustHead(newLevel); // adjust the header
-        // Track end of level
+        int newLevel = randomLevel();
+        if (newLevel > level) adjustHead(newLevel);
         SkipNode<K, E>[] update = new SkipNode[level + 1];
-        SkipNode<K, E> x = head; // Start at header node
-        for (int i = level; i >= 0; i--) { // Find insert position
-            while ((x.forward[i] != null) && (x.forward[i].key().compareTo(key) < 0))
-                x = x.forward[i];
-            update[i] = x; // Track end at level i
+        SkipNode<K, E> x = head;
+        for (int i = level; i >= 0; i--) {
+            while ((x.forward[i] != null) && (x.forward[i].key().compareTo(key) < 0)) x = x.forward[i];
+            update[i] = x;
         }
         x = new SkipNode<>(key, elem, newLevel);
-        for (int i = 0; i <= newLevel; i++) { // Splice into list
-            x.forward[i] = update[i].forward[i]; // Who x points to
-            update[i].forward[i] = x; // Who points to x
+        for (int i = 0; i <= newLevel; i++) {
+            x.forward[i] = update[i].forward[i];
+            update[i].forward[i] = x;
         }
-        size++; // Increment dictionary size
+        size++;
+    }
+    
+    public String remove(K key) {
+        SkipNode<K, E>[] update = new SkipNode[level + 1];
+        SkipNode<K, E> x = head;
+        for (int i = level; i >= 0; i--) {
+            while ((x.forward[i] != null) && (x.forward[i].key().compareTo(key) < 0))
+                x = x.forward[i];
+            update[i] = x;
+        }
+        x = x.forward[0];
+        if ((x != null) && (x.key().compareTo(key) == 0)) {
+            for (int i = 0; i <= level; i++) {
+                if (update[i].forward[i] != x) break;
+                update[i].forward[i] = x.forward[i];
+            }
+            size--;
+            return x.element().toString();
+        } else {
+            return null;
+        }
+    }
+    
+    public int size() { return size; }
+    
+    public String printSkip() {
+        if (size == 0) return "SkipList is empty";
+        StringBuilder sb = new StringBuilder();
+        SkipNode<K, E> x = head;
+        int count = 0;
+        int headerDepth = x.forward.length; // corrected (was length - 1)
+        sb.append("Node has depth ").append(headerDepth).append(", Value (null)\r\n");
+        x = x.forward[0];
+        while (x != null) {
+            int depth = x.forward.length; // corrected
+            sb.append("Node has depth ").append(depth).append(", Value (")
+              .append(x.element().toString()).append(")\r\n");
+            count++;
+            x = x.forward[0];
+        }
+        sb.append(count).append(" skiplist nodes printed\r\n");
+        return sb.toString();
     }
 
     private void adjustHead(int newLevel) {

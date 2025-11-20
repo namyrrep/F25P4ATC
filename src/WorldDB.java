@@ -10,7 +10,7 @@ public class WorldDB implements ATC {
     private final int worldSize = 1024;
     private Random rnd;
     
-    private SkipList<String, AirObject> skiplist = new SkipList<>();
+    private SkipList<String, AirObject> skiplist; // remove inline init to allow seeded construction
 
     /**
      * Create a brave new World.
@@ -20,11 +20,9 @@ public class WorldDB implements ATC {
      *
      */
     public WorldDB(Random r) {
-        rnd = r;
-        if (rnd == null) {
-            rnd = new Random();
-        }
-        clear();
+        rnd = (r == null) ? new Random() : r;
+        skiplist = new SkipList<>(rnd); // keep seeded RNG
+        // clear removed to avoid losing seed; caller can invoke if desired
     }
 
 
@@ -33,7 +31,8 @@ public class WorldDB implements ATC {
      *
      */
     public void clear() {
-        rnd = new Random();
+        // Do not reseed rnd; just recreate empty skiplist
+        skiplist = new SkipList<>(rnd);
     }
 
 
@@ -103,7 +102,8 @@ public class WorldDB implements ATC {
         if (name == null || name.isEmpty()) {
             return null;
         }
-        return null;
+        return skiplist.remove(name);
+       
     }
 
 
@@ -115,7 +115,7 @@ public class WorldDB implements ATC {
      * @return String listing the AirObjects in the Skiplist as specified.
      */
     public String printskiplist() {
-        return "SkipList is empty";
+        return skiplist.printSkip();
     }
 
 
@@ -144,7 +144,10 @@ public class WorldDB implements ATC {
         if (name == null || name.isEmpty()) {
             return null;
         }
-        return null;
+        if( skiplist.find(name) == null) {
+            return null;
+        }
+        return skiplist.find(name).toString();
     }
 
 
