@@ -96,7 +96,7 @@ public class WorldDB implements ATC {
      * 
      * @param name
      *            AirObject name.
-     * @return A string representing the AirObject, or null if no such name.
+     * @return string representing the AirObject, or no such name.
      */
     public String delete(String name) {
         if (name == null || name.isEmpty()) {
