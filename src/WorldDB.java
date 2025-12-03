@@ -11,6 +11,7 @@ public class WorldDB implements ATC {
     private Random rnd;
     
     private SkipList<String, AirObject> skiplist; // remove inline init to allow seeded construction
+    private Bintree bintree; // not used in P4A
 
     /**
      * Create a brave new World.
@@ -22,7 +23,7 @@ public class WorldDB implements ATC {
     public WorldDB(Random r) {
         rnd = (r == null) ? new Random() : r;
         skiplist = new SkipList<>(rnd); // keep seeded RNG
-        // clear removed to avoid losing seed; caller can invoke if desired
+        bintree = new Bintree(0, 0, 0, worldSize, worldSize, worldSize);
     }
 
 
@@ -102,7 +103,8 @@ public class WorldDB implements ATC {
         if (name == null || name.isEmpty()) {
             return null;
         }
-        return skiplist.remove(name);
+        
+        return skiplist.remove(name).toString();
        
     }
 

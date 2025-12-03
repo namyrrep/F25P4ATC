@@ -58,7 +58,7 @@ class SkipList<K extends Comparable<K>, E> {
         size++;
     }
     
-    public String remove(K key) {
+    public E remove(K key) {
         SkipNode<K, E>[] update = new SkipNode[level + 1];
         SkipNode<K, E> x = head;
         for (int i = level; i >= 0; i--) {
@@ -73,7 +73,7 @@ class SkipList<K extends Comparable<K>, E> {
                 update[i].forward[i] = x.forward[i];
             }
             size--;
-            return x.element().toString();
+            return x.element();
         } else {
             return null;
         }

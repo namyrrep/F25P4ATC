@@ -24,7 +24,7 @@ public class BinTree {
         Node left;
         Node right;
         
-        private static class FlyweightNode extends Node {
+        private class FlyweightNode extends Node {
         	
             FlyweightNode() {
             	super(new AirObject("FlyWeigt", -1, -1, -1, -1, -1, -1));
@@ -85,6 +85,15 @@ public class BinTree {
 
         	}
         }
+        
+        public AirObject find(AirObject name) {
+            // Find implementation
+            return null;
+        }
+        
+        public void remove(String name) {
+            // Remove implementation
+        }
     }
     
     
@@ -99,8 +108,8 @@ public class BinTree {
         return false;
     }
     
-    public AirObject find(String name) {
-        // Find implementation
+    public AirObject find(AirObject name) {
+        root.find(name);
         return null;
     }
     
