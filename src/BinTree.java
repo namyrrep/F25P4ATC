@@ -43,6 +43,27 @@ public class BinTree {
     }
     
     public boolean insert(AirObject obj) {
+        // Logic for splitting by the x dimension
+        // Left Child 
+
+
+        // Right Child
+
+
+        // Logic for splitting by the y dimension
+        // Left Child
+
+
+        // Right Child
+
+
+        // Logic for splitting by the z dimension
+        // Left Child
+
+
+        // Right Child
+
+
         // Insert implementation
         return false;
     }

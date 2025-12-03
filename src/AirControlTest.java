@@ -225,8 +225,8 @@ public class AirControlTest extends TestCase {
         assertFalse(w.add(new AirPlane("", 1, 1, 1000, 1, 1, 1000, "Alaska", 1, 1)));
         assertNull(w.delete(""));
         assertNull(w.print(""));
-//        assertNull(w.rangeprint("", "end"));
-//        assertNull(w.rangeprint("begin", ""));
+        assertNull(w.rangeprint("", "end"));
+        assertNull(w.rangeprint("begin", "")); 
     }
     
     /**
