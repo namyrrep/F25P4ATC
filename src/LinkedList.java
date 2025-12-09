@@ -13,7 +13,7 @@ public class LinkedList {
     }
     
     public void add(AirObject obj) {
-        Node newNode = new Node(obj.getName());
+        Node newNode = new Node(obj);
         newNode.next = head;
         head = newNode;
         size++;
@@ -24,7 +24,7 @@ public class LinkedList {
         Node previous = null;
         
         while (current != null) {
-            if (current.name.equals(obj.getName())) {
+            if (current.getName().equals(obj.getName())) {
                 if (previous == null) {
                     head = current.next;
                 } else {
@@ -48,7 +48,7 @@ public class LinkedList {
         while (current != null) {
             Node nextNode = current.next;
             while (nextNode != null) {
-                if (current.name.compareTo(nextNode.name) > 0) {
+                if (current.getName().compareTo(nextNode.getName()) > 0) {
                     return false; // Found an out-of-order pair
                 }
                 nextNode = nextNode.next;
@@ -63,12 +63,16 @@ public class LinkedList {
     }
     
     private static class Node {
-        public String name;
+        public AirObject air;
         public Node next;
         
-        public Node(String name) {
-            this.name = name;
+        public Node(AirObject obj) {
+            this.air = obj;
             this.next = null;
+        }
+
+        public String getName() {
+            return air.getName();
         }
     }
     
