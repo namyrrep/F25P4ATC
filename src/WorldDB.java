@@ -88,6 +88,7 @@ public class WorldDB implements ATC {
             return false;
         }
         skiplist.insert(a.getName(), a);
+        bintree.insert(a);
         return true;
 
     }
@@ -107,7 +108,11 @@ public class WorldDB implements ATC {
         if (name == null || name.isEmpty()) {
             return null;
         }
-        bintree.remove(skiplist.find(name));
+        AirObject obj = skiplist.find(name);
+        if (obj == null) {
+            return null;
+        }
+        bintree.remove(obj);
         return skiplist.remove(name).toString();
        
     }

@@ -46,10 +46,12 @@ public class BinTree {
         }
 
 
-        // This method adds the node based on its position
-        // Recursive method, starts with the root, which cannot be a fly weight,
-        // must have two children.
-        public void insert(
+        /**
+         * Insert method - returns the node that should take this node's place.
+         * Uses composite design pattern.
+         */
+        public Node insert(
+            AirObject newObj,
             int x,
             int y,
             int z,
@@ -57,38 +59,79 @@ public class BinTree {
             int ywid,
             int zwid,
             int level) {
-            // Must continuously add flyWeights using recursion to fill out the
-            // bin tree
-            // Logic for splitting by the x dimension
-            // Make sure left/right is not null or a position node.
-            if (level % 3 == 0) {
-                // Left Child
-                if (value.getXOrg() < x) {
-                    right = FLYWEIGHT;
-                    left.insert(x, y, z, xwid, ywid, zwid, level + 1);
+            // Case 1: This is a FLYWEIGHT - replace with leaf node
+            if (this == FLYWEIGHT) {
+                return new Node(newObj, FLYWEIGHT, FLYWEIGHT);
+            }
+
+            // Case 2: This is a LEAF node (has a value, not flyweight)
+            if (this.value != null && !this.value.getName().equals("FlyWeight")) {
+                // Check for duplicate location - don't insert
+                if (this.value.getXOrg() == newObj.getXOrg() 
+                    && this.value.getYOrg() == newObj.getYOrg()
+                    && this.value.getZOrg() == newObj.getZOrg()) {
+                    return this; // Don't insert duplicate location
                 }
-                // Right Child
-                else if (value.getXOrg() > x) {
-                    left = FLYWEIGHT;
-                    right.insert(x, y, z, xwid, ywid, zwid, level + 1);
+
+                // Need to split - create internal node
+                AirObject oldObj = this.value;
+                this.value = null; // Convert to internal node
+                this.left = FLYWEIGHT;
+                this.right = FLYWEIGHT;
+
+                // Re-insert the old object
+                this.insertHelper(oldObj, x, y, z, xwid, ywid, zwid, level);
+                // Insert the new object
+                this.insertHelper(newObj, x, y, z, xwid, ywid, zwid, level);
+                
+                return this;
+            }
+
+            // Case 3: This is an INTERNAL node (value == null)
+            this.insertHelper(newObj, x, y, z, xwid, ywid, zwid, level);
+            return this;
+        }
+
+
+        /**
+         * Helper method for inserting into internal nodes
+         */
+        private void insertHelper(
+            AirObject newObj,
+            int x,
+            int y,
+            int z,
+            int xwid,
+            int ywid,
+            int zwid,
+            int level) {
+            
+            if (level % 3 == 0) { // X dimension split
+                int mid = x + (xwid / 2);
+                if (newObj.getXOrg() < mid) {
+                    this.left = this.left.insert(newObj, x, y, z, xwid / 2, ywid, zwid, level + 1);
                 }
                 else {
-
+                    this.right = this.right.insert(newObj, mid, y, z, xwid / 2, ywid, zwid, level + 1);
                 }
             }
-            // Logic for splitting by the y dimension
-            else if (level % 3 == 1) {
-                // Left Child
-
-                // Right Child
-
+            else if (level % 3 == 1) { // Y dimension split
+                int mid = y + (ywid / 2);
+                if (newObj.getYOrg() < mid) {
+                    this.left = this.left.insert(newObj, x, y, z, xwid, ywid / 2, zwid, level + 1);
+                }
+                else {
+                    this.right = this.right.insert(newObj, x, mid, z, xwid, ywid / 2, zwid, level + 1);
+                }
             }
-            // Logic for splitting by the z dimension
-            else {
-                // Left Child
-
-                // Right Child
-
+            else { // Z dimension split (level % 3 == 2)
+                int mid = z + (zwid / 2);
+                if (newObj.getZOrg() < mid) {
+                    this.left = this.left.insert(newObj, x, y, z, xwid, ywid, zwid / 2, level + 1);
+                }
+                else {
+                    this.right = this.right.insert(newObj, x, y, mid, xwid, ywid, zwid / 2, level + 1);
+                }
             }
         }
 
@@ -171,6 +214,11 @@ public class BinTree {
             int ywid,
             int zwid,
             int level) {
+            // 0. FLYWEIGHT NODE: Can't remove from empty node
+            if (this == FLYWEIGHT) {
+                return FLYWEIGHT;
+            }
+            
             // 1. LEAF NODE: Check if this is the item to delete
             if (this.value != null && !this.value.getName().equals(
                 "FlyWeight")) {
@@ -237,14 +285,7 @@ public class BinTree {
 
 
     public boolean insert(AirObject obj) {
-        if (root == FLYWEIGHT) {
-            root = new Node(obj);
-            root.left = FLYWEIGHT;
-            root.right = FLYWEIGHT;
-            return true;
-        }
-        root.insert(obj.getXOrg(), obj.getYOrg(), obj.getZOrg(), worldSize,
-            worldSize, worldSize, 0);
+        root = root.insert(obj, 0, 0, 0, worldSize, worldSize, worldSize, 0);
         return true;
     }
 
@@ -260,7 +301,9 @@ public class BinTree {
      * to get the full AirObject, then pass it here.
      */
     public void remove(AirObject target) {
-        root = root.remove(target, 0, 0, 0, worldSize, worldSize, worldSize, 0);
+        if (target != null) {
+            root = root.remove(target, 0, 0, 0, worldSize, worldSize, worldSize, 0);
+        }
     }
 
 
