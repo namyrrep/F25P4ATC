@@ -14,8 +14,22 @@ public class LinkedList {
     
     public void add(AirObject obj) {
         Node newNode = new Node(obj);
-        newNode.next = head;
-        head = newNode;
+        // If the new nodes name comes before the current head nodes name
+        if (newNode.getName().compareTo(head.getName()) < 0) {
+        	newNode.next = head;
+        	head = newNode;
+        	size++;
+        	return;
+        }
+        // If it does not
+        Node currentNode = head;
+        Node nextNode = head.next;
+        while (nextNode != null && newNode.getName().compareTo(nextNode.getName()) < 0) {
+        	currentNode = nextNode;
+            nextNode = nextNode.next;
+        }
+        currentNode.next = newNode;
+        newNode.next = nextNode;
         size++;
     }
     
@@ -37,25 +51,6 @@ public class LinkedList {
             current = current.next;
         }
         return false;
-    }
-    
-    public boolean sortAlphabetically() {
-        if (head == null || head.next == null) {
-            return true; // List is empty or has one element
-        }
-        
-        Node current = head;
-        while (current != null) {
-            Node nextNode = current.next;
-            while (nextNode != null) {
-                if (current.getName().compareTo(nextNode.getName()) > 0) {
-                    return false; // Found an out-of-order pair
-                }
-                nextNode = nextNode.next;
-            }
-            current = current.next;
-        }
-        return true; // List is sorted
     }
     
     public int getSize() {
