@@ -1,8 +1,11 @@
+import java.util.Iterator;
+import java.util.NoSuchElementException;
+
 /**
 
 **/
 
-public class LinkedList {
+public class LinkedList implements Iterable<AirObject> {
     
     public Node head;
     public int size;
@@ -14,22 +17,25 @@ public class LinkedList {
     
     public void add(AirObject obj) {
         Node newNode = new Node(obj);
-        // If the new nodes name comes before the current head nodes name
-        if (newNode.getName().compareTo(head.getName()) < 0) {
-        	newNode.next = head;
-        	head = newNode;
-        	size++;
-        	return;
+
+        // Case 1: List is empty or new node should be the new head
+        if (head == null || newNode.getName().compareTo(head.getName()) < 0) {
+            newNode.next = head;
+            head = newNode;
+            size++;
+            return;
         }
-        // If it does not
+
+        // Case 2: Find the correct position to insert
         Node currentNode = head;
-        Node nextNode = head.next;
-        while (nextNode != null && newNode.getName().compareTo(nextNode.getName()) < 0) {
-        	currentNode = nextNode;
-            nextNode = nextNode.next;
+        while (currentNode.next != null
+            && newNode.getName().compareTo(currentNode.next.getName()) > 0) {
+            currentNode = currentNode.next;
         }
+
+        // Insert the new node
+        newNode.next = currentNode.next;
         currentNode.next = newNode;
-        newNode.next = nextNode;
         size++;
     }
     
@@ -57,7 +63,35 @@ public class LinkedList {
         return size;
     }
     
-    private static class Node {
+    public boolean isEmpty() {
+        return size == 0;
+    }
+    
+    @Override
+    public Iterator<AirObject> iterator() {
+        return new LinkedListIterator();
+    }
+    
+    private class LinkedListIterator implements Iterator<AirObject> {
+        private Node current = head;
+
+        @Override
+        public boolean hasNext() {
+            return current != null;
+        }
+
+        @Override
+        public AirObject next() {
+            if (!hasNext()) {
+                throw new NoSuchElementException();
+            }
+            AirObject air = current.air;
+            current = current.next;
+            return air;
+        }
+    }
+    
+    public static class Node {
         public AirObject air;
         public Node next;
         

@@ -1,0 +1,81 @@
+/**
+ * Represents a region in the 3D space.
+ */
+public class Region {
+    public final int x;
+    public final int y;
+    public final int z;
+    public final int xWidth;
+    public final int yWidth;
+    public final int zWidth;
+
+    public Region(int x, int y, int z, int xWidth, int yWidth, int zWidth) {
+        this.x = x;
+        this.y = y;
+        this.z = z;
+        this.xWidth = xWidth;
+        this.yWidth = yWidth;
+        this.zWidth = zWidth;
+    }
+
+    /**
+     * Creates the region for the left child.
+     * @param axis The axis of division.
+     * @return The region for the left child.
+     */
+    public Region leftChild(int axis) {
+        switch (axis) {
+            case 0: // X
+                return new Region(x, y, z, xWidth / 2, yWidth, zWidth);
+            case 1: // Y
+                return new Region(x, y, z, xWidth, yWidth / 2, zWidth);
+            default: // Z
+                return new Region(x, y, z, xWidth, yWidth, zWidth / 2);
+        }
+    }
+
+    /**
+     * Creates the region for the right child.
+     * @param axis The axis of division.
+     * @return The region for the right child.
+     */
+    public Region rightChild(int axis) {
+        switch (axis) {
+            case 0: // X
+                return new Region(x + (xWidth / 2), y, z, xWidth / 2, yWidth, zWidth);
+            case 1: // Y
+                return new Region(x, y + (yWidth / 2), z, xWidth, yWidth / 2, zWidth);
+            default: // Z
+                return new Region(x, y, z + (zWidth / 2), xWidth, yWidth, zWidth / 2);
+        }
+    }
+
+    /**
+     * Gets the midpoint of the region along a given axis.
+     * @param axis The axis.
+     * @return The midpoint.
+     */
+    public int midpoint(int axis) {
+        switch (axis) {
+            case 0: // X
+                return x + (xWidth / 2);
+            case 1: // Y
+                return y + (yWidth / 2);
+            default: // Z
+                return z + (zWidth / 2);
+        }
+    }
+
+    /**
+     * Checks if the region is a unit cube.
+     * @return True if it is a unit cube.
+     */
+    public boolean isUnit() {
+        return xWidth <= 1 && yWidth <= 1 && zWidth <= 1;
+    }
+    
+    @Override
+    public String toString() {
+        return String.format("(%d, %d, %d, %d, %d, %d)", x, y, z, xWidth, yWidth, zWidth);
+    }
+}
