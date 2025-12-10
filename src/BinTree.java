@@ -67,6 +67,47 @@ public class BinTree {
         return sb.toString();
     }
 
+
+    /**
+     * Finds all collisions in the tree.
+     * 
+     * @return A string reporting all collisions.
+     */
+    public String collisions() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("The following collisions exist in the database:\n");
+        root.collisions(sb, world, 0);
+        return sb.toString();
+    }
+
+    /**
+     * Finds all objects that intersect the given query box.
+     * 
+     * @param x
+     *            Query box x origin.
+     * @param y
+     *            Query box y origin.
+     * @param z
+     *            Query box z origin.
+     * @param xwid
+     *            Query box x width.
+     * @param ywid
+     *            Query box y width.
+     * @param zwid
+     *            Query box z width.
+     * @return A string reporting the objects that intersect and nodes visited.
+     */
+    public String intersect(int x, int y, int z, int xwid, int ywid, int zwid) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("The following objects intersect (").append(x).append(" ")
+            .append(y).append(" ").append(z).append(" ").append(xwid)
+            .append(" ").append(ywid).append(" ").append(zwid).append("):\n");
+        int nodesVisited = root.intersect(sb, world, 0, x, y, z, xwid, ywid, zwid);
+        sb.append(nodesVisited).append(" nodes were visited in the bintree\n");
+        return sb.toString();
+    }
+
+
     /**
      * Checks if two AirObjects have the same origin.
      * @param first The first object.
@@ -93,6 +134,40 @@ public class BinTree {
                 return obj.getYOrg();
             default:
                 return obj.getZOrg();
+        }
+    }
+
+    /**
+     * Gets the start coordinate of an AirObject's bounding box along a given axis.
+     * @param obj The object.
+     * @param axis The axis.
+     * @return The start coordinate (origin).
+     */
+    public static int getAxisStart(AirObject obj, int axis) {
+        switch (axis) {
+            case 0:
+                return obj.getXOrg();
+            case 1:
+                return obj.getYOrg();
+            default:
+                return obj.getZOrg();
+        }
+    }
+
+    /**
+     * Gets the end coordinate of an AirObject's bounding box along a given axis.
+     * @param obj The object.
+     * @param axis The axis.
+     * @return The end coordinate (origin + width).
+     */
+    public static int getAxisEnd(AirObject obj, int axis) {
+        switch (axis) {
+            case 0:
+                return obj.getXOrg() + obj.getXWidth();
+            case 1:
+                return obj.getYOrg() + obj.getYWidth();
+            default:
+                return obj.getZOrg() + obj.getZWidth();
         }
     }
 }

@@ -40,4 +40,17 @@ public final class FlyweightNode extends BinNode {
             buffer.append("  ");
         }
     }
+
+
+    @Override
+    public int collisions(StringBuilder sb, Region region, int level) {
+        return 0;
+    }
+
+    @Override
+    public int intersect(StringBuilder sb, Region region, int level,
+        int qx, int qy, int qz, int qxw, int qyw, int qzw) {
+        // Flyweight node counts as 1 visited node but produces no output
+        return 1;
+    }
 }

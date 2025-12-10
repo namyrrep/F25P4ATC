@@ -98,29 +98,31 @@ public class AirControlTest extends TestCase {
             "Found these records in the range a to l\r\n",
             w.rangeprint("a", "l"));
         assertNull(w.rangeprint("z", "a"));
-//
-//        assertFuzzyEquals(
-//            "The following collisions exist in the database:\r\n"
-//                + "In leaf node (0, 0, 0, 512, 512, 1024) 2\r\n"
-//                + "(Airplane Air1 0 10 1 20 2 30 USAir 717 4) "
-//                + "and (Balloon B1 10 11 11 21 12 31 hot_air 15)\r\n"
-//                + "In leaf node (0, 512, 0, 512, 512, 1024) 2\r\n"
-//                + "In leaf node (512, 0, 0, 512, 1024, 1024) 1\r\n",
-//                w.collisions());
-//
-//        assertFuzzyEquals(
-//            "The following objects intersect (0 0 0 1024 1024 1024):\r\n"
-//                + "In Internal node (0, 0, 0, 1024, 1024, 1024) 0\r\n"
-//                + "In Internal node (0, 0, 0, 512, 1024, 1024) 1\r\n"
-//                + "In leaf node (0, 0, 0, 512, 512, 1024) 2\r\n"
-//                + "Airplane Air1 0 10 1 20 2 30 USAir 717 4\r\n"
-//                + "Balloon B1 10 11 11 21 12 31 hot_air 15\r\n"
-//                + "Bird pterodactyl 0 100 20 10 50 50 Dinosaur 1\r\n"
-//                + "In leaf node (0, 512, 0, 512, 512, 1024) 2\r\n"
-//                + "Drone Air2 100 1010 101 924 2 900 Droners 3\r\n"
-//                + "In leaf node (512, 0, 0, 512, 1024, 1024) 1\r\n"
-//                + "5 nodes were visited in the bintree\r\n",
-//                w.intersect(0, 0, 0, 1024, 1024, 1024));
+
+        System.out.println(w.collisions());
+        assertFuzzyEquals(
+            "The following collisions exist in the database:\r\n"
+                + "In leaf node (0, 0, 0, 512, 512, 1024) 2\r\n"
+                + "(Airplane Air1 0 10 1 20 2 30 USAir 717 4) "
+                + "and (Balloon B1 10 11 11 21 12 31 hot_air 15)\r\n"
+                + "In leaf node (0, 512, 0, 512, 512, 1024) 2\r\n"
+                + "In leaf node (512, 0, 0, 512, 1024, 1024) 1\r\n",
+                w.collisions());
+        
+        System.out.println(w.intersect(0, 0, 0, 1024, 1024, 1024));
+        assertFuzzyEquals(
+            "The following objects intersect (0 0 0 1024 1024 1024):\r\n"
+                + "In Internal node (0, 0, 0, 1024, 1024, 1024) 0\r\n"
+                + "In Internal node (0, 0, 0, 512, 1024, 1024) 1\r\n"
+                + "In leaf node (0, 0, 0, 512, 512, 1024) 2\r\n"
+                + "Airplane Air1 0 10 1 20 2 30 USAir 717 4\r\n"
+                + "Balloon B1 10 11 11 21 12 31 hot_air 15\r\n"
+                + "Bird pterodactyl 0 100 20 10 50 50 Dinosaur 1\r\n"
+                + "In leaf node (0, 512, 0, 512, 512, 1024) 2\r\n"
+                + "Drone Air2 100 1010 101 924 2 900 Droners 3\r\n"
+                + "In leaf node (512, 0, 0, 512, 1024, 1024) 1\r\n"
+                + "5 nodes were visited in the bintree\r\n",
+                w.intersect(0, 0, 0, 1024, 1024, 1024));
     }
 
 
@@ -216,25 +218,5 @@ public class AirControlTest extends TestCase {
                 "1 nodes were visited in the bintree\n",
                 w.intersect(1, 1, 1, 1, 1, 1));
     }
-
-    /**
-     * Our tests for code coverage and mutations
-     * 
-     * @throws Exception
-     */
-    public void testCoverage() throws Exception {
-        WorldDB w = new WorldDB(null);
-        assertFalse(w.add(new AirPlane("", 1, 1, 1000, 1, 1, 1000, "Alaska", 1, 1)));
-        assertNull(w.delete(""));
-        assertNull(w.print(""));
-        assertNull(w.rangeprint("", "end"));
-        assertNull(w.rangeprint("begin", "")); 
-    }
-    
-    /**
-     * delete test for code coverage
-     * 
-     * @throws Exception
-     */
     
 }

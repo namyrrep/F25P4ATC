@@ -67,6 +67,17 @@ public class LinkedList implements Iterable<AirObject> {
         return size == 0;
     }
     
+    public AirObject[] toArray() {
+        AirObject[] array = new AirObject[size];
+        Node current = head;
+        int i = 0;
+        while (current != null) {
+            array[i++] = current.air;
+            current = current.next;
+        }
+        return array;
+    }
+
     @Override
     public Iterator<AirObject> iterator() {
         return new LinkedListIterator();

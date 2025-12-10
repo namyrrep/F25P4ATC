@@ -11,9 +11,16 @@ public final class InternalNode extends BinNode {
         int axis = level % 3;
         int midpoint = region.midpoint(axis);
 
-        if (BinTree.compareAxis(obj, axis) < midpoint) {
+        // Get the object's extent along this axis
+        int objStart = BinTree.getAxisStart(obj, axis);
+        int objEnd = BinTree.getAxisEnd(obj, axis);
+
+        // Insert into left child if object's bounding box intersects left region
+        if (objStart < midpoint) {
             left = left.insert(obj, region.leftChild(axis), level + 1);
-        } else {
+        }
+        // Insert into right child if object's bounding box intersects right region
+        if (objEnd > midpoint) {
             right = right.insert(obj, region.rightChild(axis), level + 1);
         }
         return this;
@@ -24,6 +31,7 @@ public final class InternalNode extends BinNode {
         int axis = level % 3;
         int midpoint = region.midpoint(axis);
 
+        // Search based on origin point
         if (BinTree.compareAxis(target, axis) < midpoint) {
             return left.find(target, region.leftChild(axis), level + 1);
         } else {
@@ -36,9 +44,16 @@ public final class InternalNode extends BinNode {
         int axis = level % 3;
         int midpoint = region.midpoint(axis);
 
-        if (BinTree.compareAxis(target, axis) < midpoint) {
+        // Get the object's extent along this axis
+        int objStart = BinTree.getAxisStart(target, axis);
+        int objEnd = BinTree.getAxisEnd(target, axis);
+
+        // Remove from left child if object's bounding box intersects left region
+        if (objStart < midpoint) {
             left = left.remove(target, region.leftChild(axis), level + 1);
-        } else {
+        }
+        // Remove from right child if object's bounding box intersects right region
+        if (objEnd > midpoint) {
             right = right.remove(target, region.rightChild(axis), level + 1);
         }
 
@@ -71,5 +86,35 @@ public final class InternalNode extends BinNode {
         for (int i = 0; i < level; i++) {
             buffer.append("  ");
         }
+    }
+
+
+    @Override
+    public int collisions(StringBuilder sb, Region region, int level) {
+        int collisionCount = 0;
+        int axis = level % 3;
+        collisionCount += left.collisions(sb, region.leftChild(axis), level + 1);
+        collisionCount += right.collisions(sb, region.rightChild(axis), level + 1);
+        return collisionCount;
+    }
+
+    @Override
+    public int intersect(StringBuilder sb, Region region, int level,
+        int qx, int qy, int qz, int qxw, int qyw, int qzw) {
+        sb.append("In Internal node ").append(region.toString()).append(" ")
+            .append(level).append("\n");
+        int nodesVisited = 1;
+        int axis = level % 3;
+        Region leftRegion = region.leftChild(axis);
+        Region rightRegion = region.rightChild(axis);
+        if (regionIntersectsQuery(leftRegion, qx, qy, qz, qxw, qyw, qzw)) {
+            nodesVisited += left.intersect(sb, leftRegion, level + 1,
+                qx, qy, qz, qxw, qyw, qzw);
+        }
+        if (regionIntersectsQuery(rightRegion, qx, qy, qz, qxw, qyw, qzw)) {
+            nodesVisited += right.intersect(sb, rightRegion, level + 1,
+                qx, qy, qz, qxw, qyw, qzw);
+        }
+        return nodesVisited;
     }
 }
