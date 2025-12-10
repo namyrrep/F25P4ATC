@@ -58,6 +58,7 @@ class SkipList<K extends Comparable<K>, E> {
         size++;
     }
     
+    @SuppressWarnings("unchecked")
     public E remove(K key) {
         SkipNode<K, E>[] update = new SkipNode[level + 1];
         SkipNode<K, E> x = head;
@@ -81,6 +82,7 @@ class SkipList<K extends Comparable<K>, E> {
     
     public int size() { return size; }
     
+    @SuppressWarnings("unchecked")
     public String rangePrint(String start, String end) {
         StringBuilder sb = new StringBuilder();
  
@@ -108,6 +110,7 @@ class SkipList<K extends Comparable<K>, E> {
         return sb.toString();
     }
     
+    @SuppressWarnings("unchecked")
     public String printSkip() {
         if (size == 0) return "SkipList is empty";
         StringBuilder sb = new StringBuilder();
@@ -126,7 +129,7 @@ class SkipList<K extends Comparable<K>, E> {
         sb.append(count).append(" skiplist nodes printed\r\n");
         return sb.toString();
     }
-
+    @SuppressWarnings("unchecked")
     private void adjustHead(int newLevel) {
         SkipNode<K, E> temp = head;
         head = new SkipNode<>(null, null, newLevel);

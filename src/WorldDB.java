@@ -111,7 +111,7 @@ public class WorldDB implements ATC {
             return null;
         }
         AirObject obj = skiplist.find(name);
-        if( obj == null) {
+        if (obj == null) {
             return null;
         }
         bintree.remove(obj);
@@ -178,7 +178,8 @@ public class WorldDB implements ATC {
      *         Null if the parameters are bad
      */
     public String rangeprint(String start, String end) {
-        if (start == null || start == "" || end == null || end == "" || start.compareTo(end) > 0) {
+        if (start == null|| start.equals("") || end == null || end
+            .equals("") || start.compareTo(end) > 0) {
             return null;
         }
         return "Found these records in the range " + start + " to " + end

@@ -219,4 +219,119 @@ public class AirControlTest extends TestCase {
                 w.intersect(1, 1, 1, 1, 1, 1));
     }
     
+    // ----------------------------------------------------------
+    /**
+     * Test coverage: Exercise code for coverage
+     *
+     * @throws Exception
+     */
+    public void testCoverage() throws Exception {
+        WorldDB w = new WorldDB(null);
+        assertFalse(w.add(null));
+        
+        // Test adding object with empty name
+        assertFalse(w.add(new Balloon("", 1, 1, 1, 1, 1, 1, "hot", 5)));
+        
+        // Test delete with empty string
+        assertNull(w.delete(""));
+        
+        // Test print with empty string
+        assertNull(w.print(""));
+        
+        // Test rangeprint with empty strings
+        assertNull(w.rangeprint("", "z"));
+        assertNull(w.rangeprint("a", ""));
+        
+        // Test adding many objects to force tree splits
+        assertTrue(w.add(new Balloon("obj1", 10, 10, 10, 10, 10, 10, "hot", 5)));
+        assertTrue(w.add(new Balloon("obj2", 20, 20, 20, 10, 10, 10, "hot", 5)));
+        assertTrue(w.add(new Balloon("obj3", 30, 30, 30, 10, 10, 10, "hot", 5)));
+        assertTrue(w.add(new Balloon("obj4", 40, 40, 40, 10, 10, 10, "hot", 5)));
+        
+        // Test objects in different regions of the tree
+        assertTrue(w.add(new Balloon("obj5", 600, 10, 10, 10, 10, 10, "hot", 5)));
+        assertTrue(w.add(new Balloon("obj6", 10, 600, 10, 10, 10, 10, "hot", 5)));
+        assertTrue(w.add(new Balloon("obj7", 10, 10, 600, 10, 10, 10, "hot", 5)));
+        assertTrue(w.add(new Balloon("obj8", 600, 600, 600, 10, 10, 10, "hot", 5)));
+        
+        // Test printbintree with multiple nodes
+        String treeOutput = w.printbintree();
+        assertNotNull(treeOutput);
+        assertTrue(treeOutput.contains("Bintree nodes printed"));
+        
+        // Test collisions with non-overlapping objects
+        String collisionOutput = w.collisions();
+        assertNotNull(collisionOutput);
+        assertTrue(collisionOutput.contains("The following collisions exist"));
+        
+        // Test intersect with specific region
+        String intersectOutput = w.intersect(0, 0, 0, 100, 100, 100);
+        assertNotNull(intersectOutput);
+        assertTrue(intersectOutput.contains("nodes were visited"));
+        
+        // Test intersect that hits only part of tree
+        intersectOutput = w.intersect(500, 500, 500, 200, 200, 200);
+        assertNotNull(intersectOutput);
+        
+        // Test delete and verify removal from both structures
+        assertNotNull(w.delete("obj1"));
+        assertNull(w.print("obj1"));
+        assertNull(w.delete("obj1")); // Already deleted
+        
+        // Test rangeprint with valid range
+        String rangeOutput = w.rangeprint("obj2", "obj5");
+        assertNotNull(rangeOutput);
+        assertTrue(rangeOutput.contains("Found these records"));
+        
+        // Test skiplist print
+        String skipOutput = w.printskiplist();
+        assertNotNull(skipOutput);
+        
+        // Delete all objects and test empty tree behavior
+        w.delete("obj2");
+        w.delete("obj3");
+        w.delete("obj4");
+        w.delete("obj5");
+        w.delete("obj6");
+        w.delete("obj7");
+        w.delete("obj8");
+        
+        // Test empty tree after deletions
+        treeOutput = w.printbintree();
+        assertTrue(treeOutput.contains("1 Bintree nodes printed"));
+        
+        // Test objects that span multiple regions (large bounding boxes)
+        assertTrue(w.add(new Drone("bigDrone", 100, 100, 100, 900, 900, 900, "BigBrand", 4)));
+        treeOutput = w.printbintree();
+        assertNotNull(treeOutput);
+        
+        // Test intersect with object spanning multiple regions
+        intersectOutput = w.intersect(0, 0, 0, 1024, 1024, 1024);
+        assertTrue(intersectOutput.contains("bigDrone"));
+        
+        // Test collisions between overlapping large objects
+        assertTrue(w.add(new Balloon("bigBalloon", 200, 200, 200, 500, 500, 500, "mega", 10)));
+        collisionOutput = w.collisions();
+        assertNotNull(collisionOutput);
+        
+        // Clean up
+        w.delete("bigDrone");
+        w.delete("bigBalloon");
+        
+        // Test adding objects at boundary positions
+        assertTrue(w.add(new Balloon("corner1", 0, 0, 0, 1, 1, 1, "tiny", 1)));
+        assertTrue(w.add(new Balloon("corner2", 1023, 1023, 1023, 1, 1, 1, "tiny", 1)));
+        
+        // Test that we can find boundary objects
+        assertNotNull(w.print("corner1"));
+        assertNotNull(w.print("corner2"));
+        
+        // Test intersect at boundaries
+        intersectOutput = w.intersect(0, 0, 0, 1, 1, 1);
+        assertTrue(intersectOutput.contains("corner1"));
+        
+        intersectOutput = w.intersect(1023, 1023, 1023, 1, 1, 1);
+        assertTrue(intersectOutput.contains("corner2"));
+    }
+    
 }
