@@ -9,8 +9,9 @@ import java.util.Random;
 public class WorldDB implements ATC {
     private final int worldSize = 1024;
     private Random rnd;
-    
-    private SkipList<String, AirObject> skiplist; // remove inline init to allow seeded construction
+
+    private SkipList<String, AirObject> skiplist; // remove inline init to allow
+                                                  // seeded construction
     private BinTree bintree; // not used in P4A
 
     /**
@@ -23,7 +24,8 @@ public class WorldDB implements ATC {
     public WorldDB(Random r) {
         if (r == null) {
             rnd = new Random();
-        } else {
+        }
+        else {
             rnd = r;
         }
         skiplist = new SkipList<>(rnd); // keep seeded RNG
@@ -58,7 +60,7 @@ public class WorldDB implements ATC {
                     .getYWidth() > worldSize || a.getZOrg() + a
                         .getZWidth() > worldSize ||
 
-            // widths must be strictly positive
+        // widths must be strictly positive
             a.getXWidth() <= 0 || a.getYWidth() <= 0 || a.getZWidth() <= 0 ||
 
             // ---------- Balloon ----------
@@ -83,8 +85,8 @@ public class WorldDB implements ATC {
                 || ((Rocket)a).getTrajectory() < 0))) {
             return false;
         }
-        
-        if( skiplist.find(a.getName()) != null) {
+
+        if (skiplist.find(a.getName()) != null) {
             return false;
         }
         skiplist.insert(a.getName(), a);
@@ -109,12 +111,12 @@ public class WorldDB implements ATC {
             return null;
         }
         AirObject obj = skiplist.find(name);
-        if (obj == null) {
+        if( obj == null) {
             return null;
         }
         bintree.remove(obj);
         return skiplist.remove(name).toString();
-       
+
     }
 
 
@@ -138,7 +140,7 @@ public class WorldDB implements ATC {
      * @return String listing the Bintree nodes as specified.
      */
     public String printbintree() {
-        return "E (0, 0, 0, 1024, 1024, 1024) 0\r\n1 Bintree nodes printed\r\n";
+        return bintree.print();
     }
 
 
@@ -155,7 +157,7 @@ public class WorldDB implements ATC {
         if (name == null || name.isEmpty()) {
             return null;
         }
-        if( skiplist.find(name) == null) {
+        if (skiplist.find(name) == null) {
             return null;
         }
         return skiplist.find(name).toString();
@@ -176,13 +178,11 @@ public class WorldDB implements ATC {
      *         Null if the parameters are bad
      */
     public String rangeprint(String start, String end) {
-        if (start == null || start.isEmpty() || end == null || end.isEmpty()) {
+        if (start == null || start == "" || end == null || end == "" || start.compareTo(end) > 0) {
             return null;
         }
-        if (start.compareTo(end) > 0) {
-            return null;
-        }
-        return "Found these records in the range begin to end\n";
+        return "Found these records in the range " + start + " to " + end
+            + "\r\n" + skiplist.rangePrint(start, end);
     }
 
 

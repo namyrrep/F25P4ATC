@@ -81,6 +81,33 @@ class SkipList<K extends Comparable<K>, E> {
     
     public int size() { return size; }
     
+    public String rangePrint(String start, String end) {
+        StringBuilder sb = new StringBuilder();
+ 
+        SkipNode<K, E> x = head;
+ 
+        // Step 1: Move to first node >= start
+        for (int i = level; i >= 0; i--) {
+            while (x.forward[i] != null &&
+                   x.forward[i].key().compareTo((K)start) < 0) {
+                x = x.forward[i];
+            }
+        }
+ 
+        // Step 2: Start scanning from bottom level
+        x = x.forward[0];
+ 
+        int count = 0;
+ 
+        // Step 3: Print until key > end
+        while (x != null && x.key().compareTo((K)end) <= 0) {
+            sb.append(x.element().toString()).append("\r\n");
+            count++;
+            x = x.forward[0];
+        }
+        return sb.toString();
+    }
+    
     public String printSkip() {
         if (size == 0) return "SkipList is empty";
         StringBuilder sb = new StringBuilder();
