@@ -1,7 +1,8 @@
-/*
- * Rocket.java
- * 
- *
+/**
+ * This is the Rocket child class
+ * @author Edwin Barrack
+ * @author Will Perryman
+ * @version 12/10/2025
  */
 public class Rocket extends AirObject {
     private int ascentRate;

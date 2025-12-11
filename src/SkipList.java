@@ -1,5 +1,13 @@
 import java.util.Random;
 
+/**
+ * This is our generic skipList
+ * @author Edwin Barrack
+ * @author Will Perryman
+ * @version 12/10/2025
+ * @param <K>
+ * @param <E>
+ */
 class SkipList<K extends Comparable<K>, E> {
     private SkipNode<K, E> head;
     private int level;
@@ -14,8 +22,12 @@ class SkipList<K extends Comparable<K>, E> {
     }
 
 
-    // Return the (first) matching matching element if one exists, null
-    // otherwise
+    /**
+     * Return the (first) matching matching element if 
+     * one exists, null otherwise
+     * @param key
+     * @return E
+     */
     public E find(K key) {
         SkipNode<K, E> x = head; // Dummy header node
         for (int i = level; i >= 0; i--) // For each level...
@@ -30,7 +42,10 @@ class SkipList<K extends Comparable<K>, E> {
     }
 
 
-    // Pick a level using a geometric distribution
+    /**
+     * Pick a level using a geometric distribution
+     * @return int
+     */
     private int randomLevel() {
         int lev = 0;
         while (Math.abs(ran.nextInt()) % 2 == 0) {
@@ -40,7 +55,11 @@ class SkipList<K extends Comparable<K>, E> {
     }
 
 
-    /** Insert a key, element pair into the skip list */
+    /** 
+     * Insert a key, element pair into the skip list 
+     * @param key
+     * @param elem
+     */
     @SuppressWarnings("unchecked")
     public void insert(K key, E elem) {
         int newLevel = randomLevel();
@@ -62,7 +81,11 @@ class SkipList<K extends Comparable<K>, E> {
         size++;
     }
 
-
+    /**
+     * Removes an item from the skipList
+     * @param key
+     * @return E
+     */
     @SuppressWarnings("unchecked")
     public E remove(K key) {
         SkipNode<K, E>[] update = new SkipNode[level + 1];
@@ -88,12 +111,21 @@ class SkipList<K extends Comparable<K>, E> {
         }
     }
 
-
+    /**
+     * Returns the number of elements in our skipList
+     * @return int
+     */
     public int size() {
         return size;
     }
 
-
+    /**
+     * Prints all elements between the start and end
+     * character in the alphabet.
+     * @param start
+     * @param end
+     * @return String
+     */
     @SuppressWarnings("unchecked")
     public String rangePrint(String start, String end) {
         StringBuilder sb = new StringBuilder();
@@ -122,7 +154,10 @@ class SkipList<K extends Comparable<K>, E> {
         return sb.toString();
     }
 
-
+    /**
+     * Prints the entire skipList
+     * @return String
+     */
     @SuppressWarnings("unchecked")
     public String printSkip() {
         if (size == 0)
@@ -145,7 +180,10 @@ class SkipList<K extends Comparable<K>, E> {
         return sb.toString();
     }
 
-
+    /**
+     * Private method that helps adjust the level of the head
+     * @param newLevel
+     */
     @SuppressWarnings("unchecked")
     private void adjustHead(int newLevel) {
         SkipNode<K, E> temp = head;
@@ -154,48 +192,84 @@ class SkipList<K extends Comparable<K>, E> {
             head.forward[i] = temp.forward[i];
         level = newLevel;
     }
-
+    
+    /**
+     * Used for storing the elements and their values
+     * @param <K2>
+     * @param <E2>
+     */
     class KVPair<K2 extends Comparable<K2>, E2> {
         private final K2 key;
         private final E2 value;
-
+        
+        /**
+         * Constructor for the pair
+         * @param k
+         * @param v
+         */
         public KVPair(K2 k, E2 v) {
             key = k;
             value = v;
         }
 
-
+        /**
+         * Returns the key
+         * @return K2 key
+         */
         public K2 key() {
             return key;
         }
 
-
+        /**
+         * returns the value
+         * @return E2 value
+         */
         public E2 value() {
             return value;
         }
 
-
+        /**
+         * This is the overridden toString() method for the
+         * KVPair class.
+         * @return String
+         */
         @Override
         public String toString() {
             return "(" + key.toString() + "," + value.toString() + ")";
         }
     }
 
-
+    /**
+     * This is the generic skipNode class
+     * @param <K2>
+     * @param <E2>
+     */
     class SkipNode<K2 extends Comparable<K2>, E2> {
         private final KVPair<K2, E2> rec;
         private SkipNode<K2, E2>[] forward;
-
+        
+        /**
+         * Returns the nodes element
+         * @return E2 rec.value
+         */
         public E2 element() {
             return rec.value();
         }
 
-
+        /**
+         * Returns the nodes key
+         * @return K2 rec.key()
+         */
         public K2 key() {
             return rec.key();
         }
 
-
+        /**
+         * This is the constructor for the SkipNode
+         * @param key
+         * @param elem
+         * @param level
+         */
         @SuppressWarnings("unchecked")
         public SkipNode(K2 key, E2 elem, int level) {
             rec = new KVPair<>(key, elem);
@@ -204,7 +278,10 @@ class SkipList<K extends Comparable<K>, E> {
                 forward[i] = null;
         }
 
-
+        /**
+         * This is the overridden toString() method for skipNode
+         * @return
+         */
         @Override
         public String toString() {
             return rec.toString();

@@ -1,6 +1,8 @@
-
 /**
- * 
+ * This is the Drone child class
+ * @author Edwin Barrack
+ * @author Will Perryman
+ * @version 12/10/2025
  */
 public class Drone extends AirObject {
     private String brand;

@@ -3,8 +3,9 @@ import java.util.Random;
 /**
  * The world for this project. We have a Skip List and a Bintree
  *
- * @author {Your Name Here}
- * @version {Put Something Here}
+ * @author Edwin Barrack
+ * @author Will Perryman
+ * @version 12/10/2025
  */
 public class WorldDB implements ATC {
     private final int worldSize = 1024;
@@ -54,7 +55,7 @@ public class WorldDB implements ATC {
     public boolean add(AirObject a) {
         if (
         // ---------- General AirObject validation ----------
-        a == null || a.getName() == null || a.getName().isEmpty() || a
+            a.getName() == null || a.getName().isEmpty() || a
             .getXOrg() < 0 || a.getYOrg() < 0 || a.getZOrg() < 0 || a.getXOrg()
                 + a.getXWidth() > worldSize || a.getYOrg() + a
                     .getYWidth() > worldSize || a.getZOrg() + a
@@ -64,24 +65,24 @@ public class WorldDB implements ATC {
             a.getXWidth() <= 0 || a.getYWidth() <= 0 || a.getZWidth() <= 0 ||
 
             // ---------- Balloon ----------
-            (a instanceof Balloon && (((Balloon)a).getType() == null
+            	(a instanceof Balloon && (((Balloon)a).getType() == null
                 || ((Balloon)a).getAscentRate() < 0)) ||
 
             // ---------- AirPlane ----------
-            (a instanceof AirPlane && (((AirPlane)a).getAirline() == null
+            	(a instanceof AirPlane && (((AirPlane)a).getAirline() == null
                 || ((AirPlane)a).getNumEngines() <= 0 || ((AirPlane)a)
                     .getFlightNumber() <= 0)) ||
 
             // ---------- Drone ----------
-            (a instanceof Drone && (((Drone)a).getBrand() == null || ((Drone)a)
-                .getNumEngines() <= 0)) ||
+            	(a instanceof Drone && (((Drone)a).getBrand() == null 
+            	|| ((Drone)a).getNumEngines() <= 0)) ||
 
             // ---------- Bird ----------
-            (a instanceof Bird && (((Bird)a).getType() == null || ((Bird)a)
-                .getNumber() <= 0)) ||
+            	(a instanceof Bird && (((Bird)a).getType() == null 
+            	|| ((Bird)a).getNumber() <= 0)) ||
 
             // ---------- Rocket ----------
-            (a instanceof Rocket && (((Rocket)a).getAscentRate() < 0
+            	(a instanceof Rocket && (((Rocket)a).getAscentRate() < 0
                 || ((Rocket)a).getTrajectory() < 0))) {
             return false;
         }

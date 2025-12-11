@@ -2,13 +2,15 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 /**
-
-**/
-
+ * This is our sorted LinkedList that stores AirObjects.
+ * @author Edwin Barrack
+ * @author Will Perryman
+ * @version 12/10/2025
+ */
 public class LinkedList implements Iterable<AirObject> {
     
-    public Node head;
-    public int size;
+    private Node head;
+    private int size;
     
     public LinkedList() {
         this.head = null;
@@ -47,7 +49,8 @@ public class LinkedList implements Iterable<AirObject> {
             if (current.getName().equals(obj.getName())) {
                 if (previous == null) {
                     head = current.next;
-                } else {
+                } 
+                else {
                     previous.next = current.next;
                 }
                 size--;
@@ -103,8 +106,8 @@ public class LinkedList implements Iterable<AirObject> {
     }
     
     public static class Node {
-        public AirObject air;
-        public Node next;
+        private AirObject air;
+        private Node next;
         
         public Node(AirObject obj) {
             this.air = obj;

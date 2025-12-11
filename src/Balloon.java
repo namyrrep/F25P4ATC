@@ -1,5 +1,8 @@
 /**
- * 
+ * This is the Balloon child class
+ * @author Edwin Barrack
+ * @author Will Perryman
+ * @version 12/10/2025
  */
 public class Balloon extends AirObject {
     private String type;

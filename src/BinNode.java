@@ -1,7 +1,10 @@
-import java.util.List;
 
 /**
- * Abstract base class for nodes in the BinTree, following the composite pattern.
+ * Abstract base class for nodes in the BinTree, 
+ * following the composite pattern.
+ * @author Edwin Barrack
+ * @author Will Perryman
+ * @version 12/10/2025
  */
 public abstract class BinNode {
 

@@ -1,5 +1,8 @@
 /**
  * The main BinTree class, which manages the root of the tree.
+ * @author Edwin Barrack
+ * @author Will Perryman
+ * @version 12/10/2025
  */
 public class BinTree {
 

@@ -1,5 +1,8 @@
 /**
  * Represents an internal node in the BinTree, which has two children.
+ * @author Edwin Barrack
+ * @author Will Perryman
+ * @version 12/10/2025
  */
 public final class InternalNode extends BinNode {
 

@@ -1,5 +1,8 @@
 /**
  * Represents the flyweight node, a singleton empty node.
+ * @author Edwin Barrack
+ * @author Will Perryman
+ * @version 12/10/2025
  */
 public final class FlyweightNode extends BinNode {
 

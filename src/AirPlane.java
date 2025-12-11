@@ -1,9 +1,8 @@
 /**
- * 
- */
-
-/**
- * 
+ * This is the Airplane child class
+ * @author Edwin Barrack
+ * @author Will Perryman
+ * @version 12/10/2025
  */
 public class AirPlane extends AirObject {
     private String airline;

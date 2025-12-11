@@ -1,5 +1,8 @@
 /**
  * Represents a leaf node in the BinTree, which stores AirObjects.
+ * @author Edwin Barrack
+ * @author Will Perryman
+ * @version 12/10/2025
  */
 public final class LeafNode extends BinNode {
 
@@ -133,7 +136,8 @@ public final class LeafNode extends BinNode {
      * Checks if splitting would help separate objects.
      * Returns true if splitting would NOT help:
      * - All objects span the midpoint (go to both children), or
-     * - All objects go exclusively to the same side (all left-only or all right-only)
+     * - All objects go exclusively to the same side 
+     * (all left-only or all right-only)
      */
     private boolean cannotSplit(Region region, int level) {
         int axis = level % 3;
@@ -152,23 +156,28 @@ public final class LeafNode extends BinNode {
             
             if (goesLeft && goesRight) {
                 hasBoth = true;
-            } else if (goesLeft) {
+            } 
+            else if (goesLeft) {
                 hasLeftOnly = true;
-            } else if (goesRight) {
+            } 
+            else if (goesRight) {
                 hasRightOnly = true;
             }
         }
         
-        // Splitting helps if we have objects going to different exclusive sides
+        // Splitting helps if we have objects going to 
+        // different exclusive sides
         // (one goes left-only, another goes right-only)
         if (hasLeftOnly && hasRightOnly) {
             return false; // Can split - objects will be separated
         }
         
-        // Splitting also helps if we have some objects spanning and some exclusive
+        // Splitting also helps if we have some objects 
+        // spanning and some exclusive
         // The exclusive ones won't be duplicated
         if (hasBoth && (hasLeftOnly || hasRightOnly)) {
-            return false; // Can split - exclusive objects won't be in both children
+            return false; 
+            // Can split - exclusive objects won't be in both children
         }
         
         // All objects go to the same place(s), splitting won't help

@@ -1,12 +1,33 @@
 /**
  * Represents a region in the 3D space.
+ * @author Edwin Barrack
+ * @author Will Perryman
+ * @version 12/10/2025
  */
 public class Region {
+    /**
+     * The regions x value
+     */
     public final int x;
+    /**
+     * The regions y value
+     */
     public final int y;
+    /**
+     * The regions z value
+     */
     public final int z;
+    /**
+     * The regions xWid value
+     */
     public final int xWidth;
+    /**
+     * The regions yWid value
+     */
     public final int yWidth;
+    /**
+     * The regions zWid value
+     */
     public final int zWidth;
 
     public Region(int x, int y, int z, int xWidth, int yWidth, int zWidth) {
@@ -82,6 +103,7 @@ public class Region {
     
     @Override
     public String toString() {
-        return String.format("(%d, %d, %d, %d, %d, %d)", x, y, z, xWidth, yWidth, zWidth);
+        return String.format("(%d, %d, %d, %d, %d, %d)", 
+        		x, y, z, xWidth, yWidth, zWidth);
     }
 }

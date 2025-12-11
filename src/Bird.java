@@ -1,5 +1,8 @@
 /**
- * 
+ * This is the Bird child class
+ * @author Edwin Barrack
+ * @author Will Perryman
+ * @version 12/10/2025
  */
 public class Bird extends AirObject {
     private String type;

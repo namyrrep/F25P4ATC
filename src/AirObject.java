@@ -1,6 +1,8 @@
 /**
- * @author William Perryman & Edwin Barrack
- * @version 2025-11
+ * This is the parent class for all our airObjects
+ * @author Edwin Barrack
+ * @author Will Perryman
+ * @version 12/10/2025
  */
 public class AirObject {
     // Fields based on project description
