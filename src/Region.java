@@ -42,11 +42,17 @@ public class Region {
     public Region rightChild(int axis) {
         switch (axis) {
             case 0: // X
-                return new Region(x + (xWidth / 2), y, z, xWidth / 2, yWidth, zWidth);
+                int halfX = xWidth / 2;
+                return new Region(x + halfX, y, z, xWidth - halfX, yWidth,
+                    zWidth);
             case 1: // Y
-                return new Region(x, y + (yWidth / 2), z, xWidth, yWidth / 2, zWidth);
+                int halfY = yWidth / 2;
+                return new Region(x, y + halfY, z, xWidth, yWidth - halfY,
+                    zWidth);
             default: // Z
-                return new Region(x, y, z + (zWidth / 2), xWidth, yWidth, zWidth / 2);
+                int halfZ = zWidth / 2;
+                return new Region(x, y, z + halfZ, xWidth, yWidth, zWidth
+                    - halfZ);
         }
     }
 

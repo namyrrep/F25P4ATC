@@ -15,15 +15,6 @@ public abstract class BinNode {
     public abstract BinNode insert(AirObject obj, Region region, int level);
 
     /**
-     * Finds an AirObject in the tree.
-     * @param target The AirObject to find.
-     * @param region The region of this node.
-     * @param level The depth of this node.
-     * @return The found AirObject, or null.
-     */
-    public abstract AirObject find(AirObject target, Region region, int level);
-
-    /**
      * Removes an AirObject from the tree.
      * @param target The AirObject to remove.
      * @param region The region of this node.

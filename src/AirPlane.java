@@ -10,6 +10,30 @@ public class AirPlane extends AirObject {
     private int numEngines;
     private int flightNumber;
 
+    /**
+     * Constructor for AirPlane.
+     *
+     * @param name
+     *            The name of the airplane.
+     * @param x
+     *            The x-coordinate of the origin.
+     * @param y
+     *            The y-coordinate of the origin.
+     * @param z
+     *            The z-coordinate of the origin.
+     * @param xWidth
+     *            The width in the x-dimension.
+     * @param yWidth
+     *            The width in the y-dimension.
+     * @param zWidth
+     *            The width in the z-dimension.
+     * @param airline
+     *            The airline of the airplane.
+     * @param flightNumber
+     *            The flight number.
+     * @param numEngines
+     *            The number of engines.
+     */
     public AirPlane(
         String name,
         int x,
@@ -59,9 +83,10 @@ public class AirPlane extends AirObject {
 
 
     /**
-     * Return a string representation of the Airplane.
+     * Returns a string representation of the Airplane.
      * 
-     * @return A string representation of the Airplane.
+     * @return A string representation of the Airplane, including its type and
+     *         attributes.
      */
     @Override
     public String toString() {

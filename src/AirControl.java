@@ -42,11 +42,12 @@ import java.io.IOException;
 
 public class AirControl {
     /**
-     * This is a placeholder for test cases that call the interface methods.
+     * The main entry point for the AirControl application.
      *
      * @param args
-     *     Command line parameters: There are none
+     *     Command line parameters, which are not used in this application.
      * @throws IOException
+     *     If an I/O error occurs.
      */
     public static void main(String[] args)
         throws IOException
