@@ -1,5 +1,6 @@
 /**
  * Represents a region in the 3D space.
+ * 
  * @author Edwin Barrack
  * @author Will Perryman
  * @version 12/10/2025
@@ -39,9 +40,12 @@ public class Region {
         this.zWidth = zWidth;
     }
 
+
     /**
      * Creates the region for the left child.
-     * @param axis The axis of division.
+     * 
+     * @param axis
+     *            The axis of division.
      * @return The region for the left child.
      */
     public Region leftChild(int axis) {
@@ -55,9 +59,12 @@ public class Region {
         }
     }
 
+
     /**
      * Creates the region for the right child.
-     * @param axis The axis of division.
+     * 
+     * @param axis
+     *            The axis of division.
      * @return The region for the right child.
      */
     public Region rightChild(int axis) {
@@ -77,9 +84,12 @@ public class Region {
         }
     }
 
+
     /**
      * Gets the midpoint of the region along a given axis.
-     * @param axis The axis.
+     * 
+     * @param axis
+     *            The axis.
      * @return The midpoint.
      */
     public int midpoint(int axis) {
@@ -93,17 +103,20 @@ public class Region {
         }
     }
 
+
     /**
      * Checks if the region is a unit cube.
+     * 
      * @return True if it is a unit cube.
      */
     public boolean isUnit() {
         return xWidth <= 1 && yWidth <= 1 && zWidth <= 1;
     }
-    
+
+
     @Override
     public String toString() {
-        return String.format("(%d, %d, %d, %d, %d, %d)", 
-        		x, y, z, xWidth, yWidth, zWidth);
+        return String.format("(%d, %d, %d, %d, %d, %d)", x, y, z, xWidth,
+            yWidth, zWidth);
     }
 }

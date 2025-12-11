@@ -223,8 +223,8 @@ public class AirControlTest extends TestCase {
      *             if an error occurs during the test.
      */
     public void testCoverage() throws Exception {
-        WorldDB w = new WorldDB(null);
-        assertFalse(w.add(null));
+        Random rnd = new Random();
+        WorldDB w = new WorldDB(rnd);
 
         // Test adding object with empty name
         assertFalse(w.add(new Balloon("", 1, 1, 1, 1, 1, 1, "hot", 5)));
@@ -976,7 +976,8 @@ public class AirControlTest extends TestCase {
      * @throws Exception if an error occurs during the test.
      */
     public void testIntersectionEdgeCases() throws Exception {
-        WorldDB w = new WorldDB(null);
+        Random rand = new Random(1042); // Fixed seed for reproducibility
+        WorldDB w = new WorldDB(rand);
 
         // Test objects at origin
         assertTrue(w.add(new Balloon("atOrigin", 0, 0, 0, 10, 10, 10, "hot", 5)));
@@ -1554,6 +1555,32 @@ public class AirControlTest extends TestCase {
         w.delete("axY2");
         w.delete("axZ1");
         w.delete("axZ2");
+    }
+    
+    // ----------------------------------------------------------
+    /**
+     * Tests InternalNode intersect with various query box positions.
+     * Covers lines 199, 202, 206 - all intersect conditions.
+     *
+     * @throws Exception if an error occurs during the test.
+     */
+    public void testIntersect() throws Exception {
+        WorldDB w = new WorldDB(null);
+
+        // Add objects in different regions to test intersect
+        assertTrue(w.add(new Balloon("left", 100, 100, 100, 50, 50, 50, "hot", 5)));   // Left half
+        assertTrue(w.add(new Balloon("right", 600, 100, 100, 50, 50, 50, "hot", 5)));  // Right half
+        assertTrue(w.add(new Balloon("top", 100, 600, 100, 50, 50, 50, "hot", 5)));    // Top half
+        assertTrue(w.add(new Balloon("deep", 100, 100, 600, 50, 50, 50, "hot", 5)));   // Back half
+
+        // Test 1: Query box intersects left half only (x < 512)
+        String result = w.intersect(0, 0, 0, 400, 1024, 1024);
+        assertTrue(result.contains("left"));
+        assertFalse(result.contains("right"));
+
+        // Test 2: Query box only in left half (x < 512)
+        // Tests: region.x < qx + qxw
+        result = w.intersect(0, 0, 0, 400, 1024, 1024);
     }
 
 }

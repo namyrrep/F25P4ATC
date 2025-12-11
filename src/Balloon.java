@@ -17,10 +17,10 @@ public class Balloon extends AirObject {
         int yWidth,
         int zWidth,
         String type,
-        int ascent_Rate) {
+        int ascentRate) {
         super(name, x, y, z, xWidth, yWidth, zWidth);
         this.type = type;
-        this.ascentRate = ascent_Rate;
+        this.ascentRate = ascentRate;
     }
 
 
