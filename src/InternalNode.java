@@ -91,11 +91,16 @@ public final class InternalNode extends BinNode {
         }
 
         // Collapse to single internal node if one side is empty
+        // But first check if that internal node can itself be collapsed
         if (left instanceof InternalNode && right instanceof FlyweightNode) {
-            return left;
+            // Recursively check if the left internal can be collapsed further
+            InternalNode leftInternal = (InternalNode)left;
+            return leftInternal.tryCollapse();
         }
         if (left instanceof FlyweightNode && right instanceof InternalNode) {
-            return right;
+            // Recursively check if the right internal can be collapsed further
+            InternalNode rightInternal = (InternalNode)right;
+            return rightInternal.tryCollapse();
         }
 
         // Check if two leaves can be merged
@@ -104,42 +109,111 @@ public final class InternalNode extends BinNode {
             LeafNode rightLeaf = (LeafNode)right;
 
             // Count unique objects (some may be duplicated across both leaves)
-            int uniqueCount = leftLeaf.getSize();
-            for (AirObject obj : rightLeaf.getObjects()) {
-                boolean isDuplicate = false;
-                for (AirObject leftObj : leftLeaf.getObjects()) {
-                    if (leftObj.getName().equals(obj.getName())) {
-                        isDuplicate = true;
-                        break;
-                    }
-                }
-                if (!isDuplicate) {
-                    uniqueCount++;
-                }
-            }
+            int uniqueCount = countUniqueObjects(leftLeaf, rightLeaf);
 
             if (uniqueCount <= 3) {
-                // Merge into one leaf, avoiding duplicates
-                LeafNode merged = new LeafNode();
-                for (AirObject obj : leftLeaf.getObjects()) {
-                    merged.addObject(obj);
-                }
-                for (AirObject obj : rightLeaf.getObjects()) {
-                    boolean isDuplicate = false;
-                    for (AirObject mergedObj : merged.getObjects()) {
-                        if (mergedObj.getName().equals(obj.getName())) {
-                            isDuplicate = true;
-                            break;
-                        }
-                    }
-                    if (!isDuplicate) {
-                        merged.addObject(obj);
-                    }
-                }
-                return merged;
+                return mergeLeaves(leftLeaf, rightLeaf);
             }
         }
 
+        return this;
+    }
+
+
+    /**
+     * Counts the number of unique objects between two leaves.
+     * Objects with the same name are considered duplicates.
+     * 
+     * @param leftLeaf
+     *            The left leaf.
+     * @param rightLeaf
+     *            The right leaf.
+     * @return The count of unique objects.
+     */
+    private int countUniqueObjects(LeafNode leftLeaf, LeafNode rightLeaf) {
+        int uniqueCount = leftLeaf.getSize();
+        for (AirObject obj : rightLeaf.getObjects()) {
+            boolean isDuplicate = false;
+            for (AirObject leftObj : leftLeaf.getObjects()) {
+                if (leftObj.getName().equals(obj.getName())) {
+                    isDuplicate = true;
+                    break;
+                }
+            }
+            if (!isDuplicate) {
+                uniqueCount++;
+            }
+        }
+        return uniqueCount;
+    }
+
+
+    /**
+     * Merges two leaf nodes into one, avoiding duplicate objects.
+     * 
+     * @param leftLeaf
+     *            The left leaf.
+     * @param rightLeaf
+     *            The right leaf.
+     * @return A new merged leaf node.
+     */
+    private LeafNode mergeLeaves(LeafNode leftLeaf, LeafNode rightLeaf) {
+        LeafNode merged = new LeafNode();
+        for (AirObject obj : leftLeaf.getObjects()) {
+            merged.addObject(obj);
+        }
+        for (AirObject obj : rightLeaf.getObjects()) {
+            boolean isDuplicate = false;
+            for (AirObject mergedObj : merged.getObjects()) {
+                if (mergedObj.getName().equals(obj.getName())) {
+                    isDuplicate = true;
+                    break;
+                }
+            }
+            if (!isDuplicate) {
+                merged.addObject(obj);
+            }
+        }
+        return merged;
+    }
+
+
+    /**
+     * Attempts to collapse this internal node if possible.
+     * Returns a simpler node if one child is empty, otherwise returns this.
+     * 
+     * @return The collapsed node, or this if no collapse is possible.
+     */
+    private BinNode tryCollapse() {
+        // If both are flyweight, return flyweight
+        if (left instanceof FlyweightNode && right instanceof FlyweightNode) {
+            return FlyweightNode.getInstance();
+        }
+        // If one side is flyweight and the other is a leaf, return the leaf
+        if (left instanceof LeafNode && right instanceof FlyweightNode) {
+            return left;
+        }
+        if (left instanceof FlyweightNode && right instanceof LeafNode) {
+            return right;
+        }
+        // If one side is flyweight and the other is internal, recursively
+        // collapse
+        if (left instanceof InternalNode && right instanceof FlyweightNode) {
+            return ((InternalNode)left).tryCollapse();
+        }
+        if (left instanceof FlyweightNode && right instanceof InternalNode) {
+            return ((InternalNode)right).tryCollapse();
+        }
+        // Check if two leaves can be merged
+        if (left instanceof LeafNode && right instanceof LeafNode) {
+            LeafNode leftLeaf = (LeafNode)left;
+            LeafNode rightLeaf = (LeafNode)right;
+            int uniqueCount = countUniqueObjects(leftLeaf, rightLeaf);
+            if (uniqueCount <= 3) {
+                return mergeLeaves(leftLeaf, rightLeaf);
+            }
+        }
+        // Both sides have content that can't be merged, return this
         return this;
     }
 

@@ -25,17 +25,12 @@ public final class LeafNode extends BinNode {
      */
     @Override
     public BinNode insert(AirObject obj, Region region, int level) {
-        for (AirObject existing : objects) {
-            if (existing.getName().equals(obj.getName())) {
-                return this;
-            }
-        }
 
         objects.add(obj);
 
         // Don't split if 3 or fewer objects, or if region can't be split
         // further
-        if (objects.getSize() <= CAPACITY || region.isUnit()) {
+        if (objects.getSize() <= CAPACITY) {
             return this;
         }
 

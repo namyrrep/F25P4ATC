@@ -104,14 +104,14 @@ public class Region {
     }
 
 
-    /**
-     * Checks if the region is a unit cube.
-     * 
-     * @return True if it is a unit cube.
-     */
-    public boolean isUnit() {
-        return xWidth <= 1 && yWidth <= 1 && zWidth <= 1;
-    }
+//    /**
+//     * Checks if the region is a unit cube.
+//     * 
+//     * @return True if it is a unit cube.
+//     */
+//    public boolean isUnit() {
+//        return xWidth <= 1 && yWidth <= 1 && zWidth <= 1;
+//    }
 
 
     @Override
