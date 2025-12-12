@@ -1,5 +1,6 @@
 /**
  * Represents a leaf node in the BinTree, which stores AirObjects.
+ * 
  * @author Edwin Barrack
  * @author Will Perryman
  * @version 12/10/2025
@@ -32,7 +33,8 @@ public final class LeafNode extends BinNode {
 
         objects.add(obj);
 
-        // Don't split if 3 or fewer objects, or if region can't be split further
+        // Don't split if 3 or fewer objects, or if region can't be split
+        // further
         if (objects.getSize() <= CAPACITY || region.isUnit()) {
             return this;
         }
@@ -148,7 +150,7 @@ public final class LeafNode extends BinNode {
         for (AirObject obj : objects) {
             arr[i++] = obj;
         }
-        
+
         // Check all pairs
         for (i = 0; i < arr.length; i++) {
             for (int j = i + 1; j < arr.length; j++) {
@@ -246,15 +248,18 @@ public final class LeafNode extends BinNode {
             level).append("\n");
         for (AirObject obj : objects) {
             if (objectIntersectsQuery(obj, qx, qy, qz, qxw, qyw, qzw)) {
-                // Calculate the origin of the intersection box between object and query
+                // Calculate the origin of the intersection box between object
+                // and query
                 int intersectX = Math.max(obj.getXOrg(), qx);
                 int intersectY = Math.max(obj.getYOrg(), qy);
                 int intersectZ = Math.max(obj.getZOrg(), qz);
-                
+
                 // Only report if the intersection origin is in this region
-                if (intersectX >= region.x && intersectX < region.x + region.xWidth
-                    && intersectY >= region.y && intersectY < region.y + region.yWidth
-                    && intersectZ >= region.z && intersectZ < region.z + region.zWidth) {
+                if (intersectX >= region.x && intersectX < region.x
+                    + region.xWidth && intersectY >= region.y
+                    && intersectY < region.y + region.yWidth
+                    && intersectZ >= region.z && intersectZ < region.z
+                        + region.zWidth) {
                     sb.append(obj.toString()).append("\n");
                 }
             }

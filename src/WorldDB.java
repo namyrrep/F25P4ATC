@@ -178,7 +178,7 @@ public class WorldDB implements ATC {
             return null;
         }
         return "Found these records in the range " + start + " to " + end
-                + "\r\n" + skiplist.rangePrint(start, end);
+            + "\r\n" + skiplist.rangePrint(start, end);
     }
 
 
@@ -221,9 +221,9 @@ public class WorldDB implements ATC {
      *         Return null if any input parameters are bad
      */
     public String intersect(int x, int y, int z, int xwid, int ywid, int zwid) {
-        if (x < 0 || y < 0 || z < 0 || xwid <= 0 || ywid <= 0 || zwid <= 0 
-                || x + xwid > worldSize || y + ywid > worldSize 
-                || z + zwid > worldSize) {
+        if (x < 0 || y < 0 || z < 0 || xwid <= 0 || ywid <= 0 || zwid <= 0 || x
+            + xwid > worldSize || y + ywid > worldSize || z
+                + zwid > worldSize) {
             return null;
         }
         return bintree.intersect(x, y, z, xwid, ywid, zwid);

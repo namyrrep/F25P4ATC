@@ -1,5 +1,6 @@
 /**
  * Represents an internal node in the BinTree, which has two children.
+ * 
  * @author Edwin Barrack
  * @author Will Perryman
  * @version 12/10/2025
@@ -88,7 +89,7 @@ public final class InternalNode extends BinNode {
         if (left instanceof FlyweightNode && right instanceof LeafNode) {
             return right;
         }
-        
+
         // Collapse to single internal node if one side is empty
         if (left instanceof InternalNode && right instanceof FlyweightNode) {
             return left;
@@ -101,7 +102,7 @@ public final class InternalNode extends BinNode {
         if (left instanceof LeafNode && right instanceof LeafNode) {
             LeafNode leftLeaf = (LeafNode)left;
             LeafNode rightLeaf = (LeafNode)right;
-            
+
             // Count unique objects (some may be duplicated across both leaves)
             int uniqueCount = leftLeaf.getSize();
             for (AirObject obj : rightLeaf.getObjects()) {
@@ -116,7 +117,7 @@ public final class InternalNode extends BinNode {
                     uniqueCount++;
                 }
             }
-            
+
             if (uniqueCount <= 3) {
                 // Merge into one leaf, avoiding duplicates
                 LeafNode merged = new LeafNode();
@@ -238,12 +239,12 @@ public final class InternalNode extends BinNode {
         Region leftRegion = region.leftChild(axis);
         Region rightRegion = region.rightChild(axis);
         if (!(left instanceof FlyweightNode) && regionIntersectsQuery(
-                leftRegion, qx, qy, qz, qxw, qyw, qzw)) {
+            leftRegion, qx, qy, qz, qxw, qyw, qzw)) {
             nodesVisited += left.intersect(sb, leftRegion, level + 1, qx, qy,
                 qz, qxw, qyw, qzw);
         }
         if (!(right instanceof FlyweightNode) && regionIntersectsQuery(
-                rightRegion, qx, qy, qz, qxw, qyw, qzw)) {
+            rightRegion, qx, qy, qz, qxw, qyw, qzw)) {
             nodesVisited += right.intersect(sb, rightRegion, level + 1, qx, qy,
                 qz, qxw, qyw, qzw);
         }
