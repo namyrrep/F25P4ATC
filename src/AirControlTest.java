@@ -1290,7 +1290,6 @@ public class AirControlTest extends TestCase {
 
         assertNotNull(w.delete("rem4")); // Back Z axis
         tree = w.printbintree();
-        ;
         assertFuzzyEquals(
             "Leaf with 1 objects (0, 0, 0, 1024, 1024, 1024) 0\r\n"
                 + "(Balloon rem1 100 100 100 10 10 10 hot 5)\r\n"
@@ -1299,7 +1298,6 @@ public class AirControlTest extends TestCase {
 
         assertNotNull(w.delete("rem1")); // Last one
         tree = w.printbintree();
-        ;
         assertFuzzyEquals("E (0, 0, 0, 1024, 1024, 1024) 0\r\n"
             + "1 Bintree nodes printed", tree);
         assertTrue(tree.contains("E (0, 0, 0, 1024, 1024, 1024) 0"));
