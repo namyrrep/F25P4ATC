@@ -90,17 +90,13 @@ public final class InternalNode extends BinNode {
             return right;
         }
 
-        // Collapse to single internal node if one side is empty
-        // But first check if that internal node can itself be collapsed
+        // If one side is empty and the other is internal, try to collect all
+        // objects from the internal subtree and merge into a single leaf
         if (left instanceof InternalNode && right instanceof FlyweightNode) {
-            // Recursively check if the left internal can be collapsed further
-            InternalNode leftInternal = (InternalNode)left;
-            return leftInternal.tryCollapse();
+            return tryCollapseSubtree((InternalNode)left);
         }
         if (left instanceof FlyweightNode && right instanceof InternalNode) {
-            // Recursively check if the right internal can be collapsed further
-            InternalNode rightInternal = (InternalNode)right;
-            return rightInternal.tryCollapse();
+            return tryCollapseSubtree((InternalNode)right);
         }
 
         // Check if two leaves can be merged
@@ -117,6 +113,66 @@ public final class InternalNode extends BinNode {
         }
 
         return this;
+    }
+
+
+    /**
+     * Tries to collapse an internal subtree into a single leaf if it contains
+     * 3 or fewer unique objects. If not possible, returns the internal node.
+     * 
+     * @param internal
+     *            The internal node to try to collapse.
+     * @return A leaf if collapse is possible, otherwise the internal node.
+     */
+    private BinNode tryCollapseSubtree(InternalNode internal) {
+        // Collect all unique objects from the subtree
+        java.util.Set<String> seenNames = new java.util.HashSet<>();
+        java.util.List<AirObject> allObjects = new java.util.ArrayList<>();
+        collectObjects(internal, allObjects, seenNames);
+        
+        // If 3 or fewer unique objects, create a single leaf
+        if (allObjects.size() <= 3) {
+            LeafNode merged = new LeafNode();
+            for (AirObject obj : allObjects) {
+                merged.addObject(obj);
+            }
+            return merged;
+        }
+        
+        // Can't collapse, return the internal node as-is
+        return internal;
+    }
+
+
+    /**
+     * Recursively collects all unique objects from a subtree.
+     * 
+     * @param node
+     *            The current node.
+     * @param objects
+     *            The list to add objects to.
+     * @param seenNames
+     *            Set of names already seen (to avoid duplicates).
+     */
+    private void collectObjects(BinNode node, java.util.List<AirObject> objects,
+        java.util.Set<String> seenNames) {
+        if (node instanceof FlyweightNode) {
+            return;
+        }
+        if (node instanceof LeafNode) {
+            LeafNode leaf = (LeafNode)node;
+            for (AirObject obj : leaf.getObjects()) {
+                if (!seenNames.contains(obj.getName())) {
+                    seenNames.add(obj.getName());
+                    objects.add(obj);
+                }
+            }
+        }
+        else if (node instanceof InternalNode) {
+            InternalNode internal = (InternalNode)node;
+            collectObjects(internal.left, objects, seenNames);
+            collectObjects(internal.right, objects, seenNames);
+        }
     }
 
 
@@ -175,46 +231,6 @@ public final class InternalNode extends BinNode {
             }
         }
         return merged;
-    }
-
-
-    /**
-     * Attempts to collapse this internal node if possible.
-     * Returns a simpler node if one child is empty, otherwise returns this.
-     * 
-     * @return The collapsed node, or this if no collapse is possible.
-     */
-    private BinNode tryCollapse() {
-        // If both are flyweight, return flyweight
-        if (left instanceof FlyweightNode && right instanceof FlyweightNode) {
-            return FlyweightNode.getInstance();
-        }
-        // If one side is flyweight and the other is a leaf, return the leaf
-        if (left instanceof LeafNode && right instanceof FlyweightNode) {
-            return left;
-        }
-        if (left instanceof FlyweightNode && right instanceof LeafNode) {
-            return right;
-        }
-        // If one side is flyweight and the other is internal, recursively
-        // collapse
-        if (left instanceof InternalNode && right instanceof FlyweightNode) {
-            return ((InternalNode)left).tryCollapse();
-        }
-        if (left instanceof FlyweightNode && right instanceof InternalNode) {
-            return ((InternalNode)right).tryCollapse();
-        }
-        // Check if two leaves can be merged
-        if (left instanceof LeafNode && right instanceof LeafNode) {
-            LeafNode leftLeaf = (LeafNode)left;
-            LeafNode rightLeaf = (LeafNode)right;
-            int uniqueCount = countUniqueObjects(leftLeaf, rightLeaf);
-            if (uniqueCount <= 3) {
-                return mergeLeaves(leftLeaf, rightLeaf);
-            }
-        }
-        // Both sides have content that can't be merged, return this
-        return this;
     }
 
 
