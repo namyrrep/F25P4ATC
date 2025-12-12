@@ -76,13 +76,24 @@ public final class InternalNode extends BinNode {
             right = right.remove(target, region.rightChild(axis), level + 1);
         }
 
+        // Collapse to flyweight if both sides are empty
         if (left instanceof FlyweightNode && right instanceof FlyweightNode) {
             return FlyweightNode.getInstance();
         }
+
+        // Collapse to single leaf if one side is empty
         if (left instanceof LeafNode && right instanceof FlyweightNode) {
             return left;
         }
         if (left instanceof FlyweightNode && right instanceof LeafNode) {
+            return right;
+        }
+        
+        // Collapse to single internal node if one side is empty
+        if (left instanceof InternalNode && right instanceof FlyweightNode) {
+            return left;
+        }
+        if (left instanceof FlyweightNode && right instanceof InternalNode) {
             return right;
         }
 
@@ -150,8 +161,12 @@ public final class InternalNode extends BinNode {
             .append("\n");
         int nodes = 1;
         int axis = level % 3;
-        nodes += left.print(buffer, region.leftChild(axis), level + 1);
-        nodes += right.print(buffer, region.rightChild(axis), level + 1);
+        if (!(left instanceof FlyweightNode)) {
+            nodes += left.print(buffer, region.leftChild(axis), level + 1);
+        }
+        if (!(right instanceof FlyweightNode)) {
+            nodes += right.print(buffer, region.rightChild(axis), level + 1);
+        }
         return nodes;
     }
 
@@ -226,11 +241,13 @@ public final class InternalNode extends BinNode {
         int axis = level % 3;
         Region leftRegion = region.leftChild(axis);
         Region rightRegion = region.rightChild(axis);
-        if (regionIntersectsQuery(leftRegion, qx, qy, qz, qxw, qyw, qzw)) {
+        if (!(left instanceof FlyweightNode) && regionIntersectsQuery(
+                leftRegion, qx, qy, qz, qxw, qyw, qzw)) {
             nodesVisited += left.intersect(sb, leftRegion, level + 1, qx, qy,
                 qz, qxw, qyw, qzw);
         }
-        if (regionIntersectsQuery(rightRegion, qx, qy, qz, qxw, qyw, qzw)) {
+        if (!(right instanceof FlyweightNode) && regionIntersectsQuery(
+                rightRegion, qx, qy, qz, qxw, qyw, qzw)) {
             nodesVisited += right.intersect(sb, rightRegion, level + 1, qx, qy,
                 qz, qxw, qyw, qzw);
         }

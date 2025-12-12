@@ -96,9 +96,6 @@ public class LinkedList implements Iterable<AirObject> {
 
         @Override
         public AirObject next() {
-            if (!hasNext()) {
-                throw new NoSuchElementException();
-            }
             AirObject air = current.air;
             current = current.next;
             return air;

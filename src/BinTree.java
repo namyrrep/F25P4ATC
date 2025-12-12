@@ -1,5 +1,6 @@
 /**
  * The main BinTree class, which manages the root of the tree.
+ * 
  * @author Edwin Barrack
  * @author Will Perryman
  * @version 12/10/2025
@@ -29,9 +30,6 @@ public class BinTree {
      * @return True if insertion was successful.
      */
     public boolean insert(AirObject obj) {
-        if (obj == null) {
-            return false;
-        }
         root = root.insert(obj, world, 0);
         return true;
     }
@@ -44,9 +42,7 @@ public class BinTree {
      *            The AirObject to remove.
      */
     public void remove(AirObject target) {
-        if (target != null) {
-            root = root.remove(target, world, 0);
-        }
+        root = root.remove(target, world, 0);
     }
 
 

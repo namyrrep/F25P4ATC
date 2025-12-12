@@ -133,11 +133,10 @@ public final class LeafNode extends BinNode {
 
 
     /**
-     * Checks if splitting would help separate objects.
-     * Returns true if splitting would NOT help:
-     * - All objects span the midpoint (go to both children), or
-     * - All objects go exclusively to the same side 
-     * (all left-only or all right-only)
+     * Checks if splitting would help separate objects on the current axis.
+     * Returns true if splitting would NOT help - meaning all objects
+     * would end up in the same child(ren) after splitting.
+     * This allows leaves to grow infinitely when objects are at the same position.
      */
     private boolean cannotSplit(Region region, int level) {
         int axis = level % 3;
@@ -145,7 +144,7 @@ public final class LeafNode extends BinNode {
         
         boolean hasLeftOnly = false;
         boolean hasRightOnly = false;
-        boolean hasBoth = false;
+        boolean hasSpanning = false;
         
         for (AirObject obj : objects) {
             int objStart = BinTree.getAxisStart(obj, axis);
@@ -155,8 +154,8 @@ public final class LeafNode extends BinNode {
             boolean goesRight = objEnd > midpoint;
             
             if (goesLeft && goesRight) {
-                hasBoth = true;
-            } 
+                hasSpanning = true;
+            }
             else if (goesLeft) {
                 hasLeftOnly = true;
             } 
@@ -165,22 +164,19 @@ public final class LeafNode extends BinNode {
             }
         }
         
-        // Splitting helps if we have objects going to 
-        // different exclusive sides
-        // (one goes left-only, another goes right-only)
+        // Splitting helps if we have objects going to different sides:
+        // 1. Some left-only and some right-only (they get separated)
+        // 2. Some exclusive (left or right only) and some spanning 
+        //    (exclusive stays on one side, spanning goes to both)
         if (hasLeftOnly && hasRightOnly) {
-            return false; // Can split - objects will be separated
+            return false; // Can split
         }
-        
-        // Splitting also helps if we have some objects 
-        // spanning and some exclusive
-        // The exclusive ones won't be duplicated
-        if (hasBoth && (hasLeftOnly || hasRightOnly)) {
-            return false; 
-            // Can split - exclusive objects won't be in both children
+        if (hasSpanning && (hasLeftOnly || hasRightOnly)) {
+            return false; // Can split
         }
         
         // All objects go to the same place(s), splitting won't help
+        // (all left-only, all right-only, or all spanning)
         return true;
     }
 
@@ -269,24 +265,20 @@ public final class LeafNode extends BinNode {
         sb.append("In leaf node ").append(region.toString()).append(" ").append(
             level).append("\n");
         for (AirObject obj : objects) {
-            // Only report object if its origin is within this region
-            if (originInRegion(obj, region) && objectIntersectsQuery(obj, qx,
-                qy, qz, qxw, qyw, qzw)) {
-                sb.append(obj.toString()).append("\n");
+            if (objectIntersectsQuery(obj, qx, qy, qz, qxw, qyw, qzw)) {
+                // Calculate the origin of the intersection box between object and query
+                int intersectX = Math.max(obj.getXOrg(), qx);
+                int intersectY = Math.max(obj.getYOrg(), qy);
+                int intersectZ = Math.max(obj.getZOrg(), qz);
+                
+                // Only report if the intersection origin is in this region
+                if (intersectX >= region.x && intersectX < region.x + region.xWidth
+                    && intersectY >= region.y && intersectY < region.y + region.yWidth
+                    && intersectZ >= region.z && intersectZ < region.z + region.zWidth) {
+                    sb.append(obj.toString()).append("\n");
+                }
             }
         }
         return 1;
-    }
-
-
-    /**
-     * Checks if an object's origin is within the given region.
-     */
-    private boolean originInRegion(AirObject obj, Region region) {
-        return obj.getXOrg() >= region.x && obj.getXOrg() < region.x
-            + region.xWidth && obj.getYOrg() >= region.y && obj
-                .getYOrg() < region.y + region.yWidth && obj
-                    .getZOrg() >= region.z && obj.getZOrg() < region.z
-                        + region.zWidth;
     }
 }
