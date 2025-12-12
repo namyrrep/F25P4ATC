@@ -77,6 +77,14 @@ public final class InternalNode extends BinNode {
             right = right.remove(target, region.rightChild(axis), level + 1);
         }
 
+        // Attempt to collapse child subtrees into leaves when they became small
+        if (left instanceof InternalNode) {
+            left = tryCollapseSubtree((InternalNode)left);
+        }
+        if (right instanceof InternalNode) {
+            right = tryCollapseSubtree((InternalNode)right);
+        }
+
         // Collapse to flyweight if both sides are empty
         if (left instanceof FlyweightNode && right instanceof FlyweightNode) {
             return FlyweightNode.getInstance();
@@ -88,15 +96,6 @@ public final class InternalNode extends BinNode {
         }
         if (left instanceof FlyweightNode && right instanceof LeafNode) {
             return right;
-        }
-
-        // If one side is empty and the other is internal, try to collect all
-        // objects from the internal subtree and merge into a single leaf
-        if (left instanceof InternalNode && right instanceof FlyweightNode) {
-            return tryCollapseSubtree((InternalNode)left);
-        }
-        if (left instanceof FlyweightNode && right instanceof InternalNode) {
-            return tryCollapseSubtree((InternalNode)right);
         }
 
         // Check if two leaves can be merged

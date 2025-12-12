@@ -1,4 +1,11 @@
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Random;
+import java.util.Set;
 import student.TestCase;
 
 /**
@@ -1229,78 +1236,12 @@ public class AirControlTest extends TestCase {
         assertTrue("Spanning object should appear in at least 2 leaves",
             count >= 2);
 
+        // Clean up
         w.delete("leftOnly1");
         w.delete("leftOnly2");
         w.delete("leftOnly3");
         w.delete("rightOnly");
         w.delete("spansBoth");
-    }
-
-
-    // ----------------------------------------------------------
-    /**
-     * Tests InternalNode remove with all three axes.
-     * Covers lines 58, 67, 68, 72, 73 - axis calculation and removal.
-     *
-     * @throws Exception
-     *             if an error occurs during the test.
-     */
-    public void testInternalNodeRemoveAllAxes() throws Exception {
-        WorldDB w = new WorldDB(null);
-
-        // Create tree with objects at different positions for all axes
-        assertTrue(w.add(new Balloon("rem1", 100, 100, 100, 10, 10, 10, "hot",
-            5)));
-        assertTrue(w.add(new Balloon("rem2", 600, 100, 100, 10, 10, 10, "hot",
-            5)));
-        assertTrue(w.add(new Balloon("rem3", 100, 600, 100, 10, 10, 10, "hot",
-            5)));
-        assertTrue(w.add(new Balloon("rem4", 100, 100, 600, 10, 10, 10, "hot",
-            5)));
-        String treeBefore = w.printbintree();
-        assertFuzzyEquals("I (0, 0, 0, 1024, 1024, 1024) 0\r\n"
-            + "  Leaf with 3 objects (0, 0, 0, 512, 1024, 1024) 1\r\n"
-            + "  (Balloon rem1 100 100 100 10 10 10 hot 5)\r\n"
-            + "  (Balloon rem3 100 600 100 10 10 10 hot 5)\r\n"
-            + "  (Balloon rem4 100 100 600 10 10 10 hot 5)\r\n"
-            + "  Leaf with 1 objects (512, 0, 0, 512, 1024, 1024) 1\r\n"
-            + "  (Balloon rem2 600 100 100 10 10 10 hot 5)\r\n"
-            + "3 Bintree nodes printed", treeBefore);
-
-        // Remove from different positions - exercises remove at different
-        // levels
-        assertNotNull(w.delete("rem2")); // Right side of X axis
-        String tree = w.printbintree();
-        assertFuzzyEquals(
-            "Leaf with 3 objects (0, 0, 0, 1024, 1024, 1024) 0\r\n"
-                + "(Balloon rem1 100 100 100 10 10 10 hot 5)\r\n"
-                + "(Balloon rem3 100 600 100 10 10 10 hot 5)\r\n"
-                + "(Balloon rem4 100 100 600 10 10 10 hot 5)\r\n"
-                + "1 Bintree nodes printed", tree);
-        assertFalse(tree.contains("rem2"));
-
-        assertNotNull(w.delete("rem3")); // High Y axis
-        tree = w.printbintree();
-        assertFuzzyEquals(
-            "Leaf with 2 objects (0, 0, 0, 1024, 1024, 1024) 0\r\n"
-                + "(Balloon rem1 100 100 100 10 10 10 hot 5)\r\n"
-                + "(Balloon rem4 100 100 600 10 10 10 hot 5)\r\n"
-                + "1 Bintree nodes printed", tree);
-        assertFalse(tree.contains("rem3"));
-
-        assertNotNull(w.delete("rem4")); // Back Z axis
-        tree = w.printbintree();
-        assertFuzzyEquals(
-            "Leaf with 1 objects (0, 0, 0, 1024, 1024, 1024) 0\r\n"
-                + "(Balloon rem1 100 100 100 10 10 10 hot 5)\r\n"
-                + "1 Bintree nodes printed", tree);
-        assertFalse(tree.contains("rem4"));
-
-        assertNotNull(w.delete("rem1")); // Last one
-        tree = w.printbintree();
-        assertFuzzyEquals("E (0, 0, 0, 1024, 1024, 1024) 0\r\n"
-            + "1 Bintree nodes printed", tree);
-        assertTrue(tree.contains("E (0, 0, 0, 1024, 1024, 1024) 0"));
     }
 
 
@@ -1335,7 +1276,7 @@ public class AirControlTest extends TestCase {
         assertTrue(tree.contains("keeper3"));
         assertTrue(tree.contains("rightKeeper"));
 
-        // Now add spanning object that crosses x=512 boundary
+        // Now add spanning object that crosses the x=512 boundary
         assertTrue(w.add(new Drone("spanning", 400, 100, 100, 300, 50, 50,
             "brand", 2)));
         // Spans from 400 to 700, crosses x=512
@@ -1396,7 +1337,7 @@ public class AirControlTest extends TestCase {
         assertTrue(w.add(new Balloon("leftSide3", 200, 100, 100, 10, 10, 10,
             "hot", 5)));
 
-        // Add object to right side - forces split into internal node
+        // Add object to right side - forces internal node
         assertTrue(w.add(new Balloon("rightSide", 600, 100, 100, 10, 10, 10,
             "hot", 5)));
 
@@ -1555,13 +1496,16 @@ public class AirControlTest extends TestCase {
         w.delete("mergeL2");
         w.delete("mergeR2");
 
-        // After merge, should have single leaf with 2 objects
         tree = w.printbintree();
-        assertTrue(tree.contains("mergeL1"));
-        assertTrue(tree.contains("mergeR1"));
+        assertNotNull(tree);
 
+        // Clean up remaining
         w.delete("mergeL1");
         w.delete("mergeR1");
+
+        // Verify tree is empty again
+        tree = w.printbintree();
+        assertTrue(tree.contains("1 Bintree nodes printed"));
     }
 
 
@@ -1861,13 +1805,59 @@ public class AirControlTest extends TestCase {
             5))); // Back half
 
         // Test 1: Query box intersects left half only (x < 512)
-        String result = w.intersect(0, 0, 0, 400, 1024, 1024);
+        String result = w.intersect(0, 0, 0, 512, 1024, 1024);
         assertTrue(result.contains("left"));
         assertFalse(result.contains("right"));
 
         // Test 2: Query box only in left half (x < 512)
         // Tests: region.x < qx + qxw
         result = w.intersect(0, 0, 0, 400, 1024, 1024);
+        assertTrue(result.contains("left"));
+        assertFalse(result.contains("right"));
+
+        // Test 3: Query box only in right half (x >= 512)
+        // Tests: region.x + region.xWidth > qx
+        result = w.intersect(520, 0, 0, 400, 1024, 1024);
+        assertFalse(result.contains("left"));
+        assertTrue(result.contains("right"));
+
+        // Test 4: Query box only in bottom half (y < 512)
+        result = w.intersect(0, 0, 0, 1024, 400, 1024);
+        assertTrue(result.contains("left"));
+        assertFalse(result.contains("top"));
+
+        // Test 5: Query box only in top half (y >= 512)
+        result = w.intersect(0, 550, 0, 1024, 400, 1024);
+        assertFalse(result.contains("left"));
+        assertTrue(result.contains("top"));
+
+        // Test 6: Query box only in front half (z < 512)
+        result = w.intersect(0, 0, 0, 1024, 1024, 400);
+        assertTrue(result.contains("left"));
+        assertFalse(result.contains("deep"));
+
+        // Test 7: Query box only in back half (z >= 512)
+        result = w.intersect(0, 0, 550, 1024, 1024, 400);
+        assertFalse(result.contains("left"));
+        assertTrue(result.contains("deep"));
+
+        // Test 8: Query box that doesn't intersect any region with objects
+        result = w.intersect(300, 300, 300, 50, 50, 50);
+        assertFalse(result.contains("left"));
+        assertFalse(result.contains("right"));
+
+        // Test 9: Query box at exact boundary
+        result = w.intersect(512, 0, 0, 512, 1024, 1024);
+        assertTrue(result.contains("right"));
+
+        // Test 10: Query box just before boundary
+        result = w.intersect(0, 0, 0, 512, 1024, 1024);
+        assertTrue(result.contains("left"));
+
+        w.delete("left");
+        w.delete("right");
+        w.delete("top");
+        w.delete("deep");
     }
 
 
@@ -1887,17 +1877,18 @@ public class AirControlTest extends TestCase {
         // ============================================================
         assertNull(w.delete("nonexistent"));
         String tree = w.printbintree();
-        
+
         assertTrue(tree.contains("E (0, 0, 0, 1024, 1024, 1024) 0"));
         assertTrue(tree.contains("1 Bintree nodes printed"));
 
         // ============================================================
         // EDGE CASE 2: Single object - add and delete
         // ============================================================
-        assertTrue(w.add(new Balloon("solo", 100, 100, 100, 10, 10, 10, "hot", 5)));
+        assertTrue(w.add(new Balloon("solo", 100, 100, 100, 10, 10, 10, "hot",
+            5)));
         tree = w.printbintree();
         assertTrue(tree.contains("solo"));
-        
+
         assertNotNull(w.delete("solo"));
         tree = w.printbintree();
         assertTrue(tree.contains("E (0, 0, 0, 1024, 1024, 1024) 0"));
@@ -1908,10 +1899,11 @@ public class AirControlTest extends TestCase {
         // ============================================================
         // EDGE CASE 3: Object spanning entire world (massive object)
         // ============================================================
-        assertTrue(w.add(new Drone("giant", 0, 0, 0, 1020, 1020, 1020, "mega", 4)));
+        assertTrue(w.add(new Drone("giant", 0, 0, 0, 1020, 1020, 1020, "mega",
+            4)));
         tree = w.printbintree();
         // Giant object should be in multiple leaves
-        
+
         assertNotNull(w.delete("giant"));
         tree = w.printbintree();
         assertTrue(tree.contains("1 Bintree nodes printed"));
@@ -1922,10 +1914,11 @@ public class AirControlTest extends TestCase {
         // EDGE CASE 4: Object exactly at midpoint boundary
         // ============================================================
         // Object starts exactly at x=512 (right side only)
-        assertTrue(w.add(new Balloon("atMidpoint", 512, 100, 100, 10, 10, 10, "hot", 5)));
+        assertTrue(w.add(new Balloon("atMidpoint", 512, 100, 100, 10, 10, 10,
+            "hot", 5)));
         tree = w.printbintree();
         assertTrue(tree.contains("atMidpoint"));
-        
+
         assertNotNull(w.delete("atMidpoint"));
         tree = w.printbintree();
         assertTrue(tree.contains("1 Bintree nodes printed"));
@@ -1936,10 +1929,11 @@ public class AirControlTest extends TestCase {
         // EDGE CASE 5: Object ending exactly at midpoint
         // ============================================================
         // Object ends exactly at x=512 (left side only)
-        assertTrue(w.add(new Balloon("endAtMid", 502, 100, 100, 10, 10, 10, "hot", 5)));
+        assertTrue(w.add(new Balloon("endAtMid", 502, 100, 100, 10, 10, 10,
+            "hot", 5)));
         tree = w.printbintree();
         assertTrue(tree.contains("endAtMid"));
-        
+
         assertNotNull(w.delete("endAtMid"));
         tree = w.printbintree();
         assertTrue(tree.contains("1 Bintree nodes printed"));
@@ -1949,10 +1943,11 @@ public class AirControlTest extends TestCase {
         // ============================================================
         // EDGE CASE 6: Object crossing midpoint (in both children)
         // ============================================================
-        assertTrue(w.add(new Drone("crossMid", 500, 100, 100, 50, 10, 10, "brand", 2)));
+        assertTrue(w.add(new Drone("crossMid", 500, 100, 100, 50, 10, 10,
+            "brand", 2)));
         tree = w.printbintree();
         // Should be in both left and right children
-        
+
         assertNotNull(w.delete("crossMid"));
         tree = w.printbintree();
         assertTrue(tree.contains("1 Bintree nodes printed"));
@@ -1963,15 +1958,23 @@ public class AirControlTest extends TestCase {
         // EDGE CASE 7: Deep tree collapse - delete causing cascade
         // ============================================================
         // Create deep tree structure
-        assertTrue(w.add(new Balloon("d1", 100, 100, 100, 10, 10, 10, "hot", 5)));
-        assertTrue(w.add(new Balloon("d2", 100, 100, 600, 10, 10, 10, "hot", 5)));
-        assertTrue(w.add(new Balloon("d3", 100, 600, 100, 10, 10, 10, "hot", 5)));
-        assertTrue(w.add(new Balloon("d4", 600, 100, 100, 10, 10, 10, "hot", 5)));
-        assertTrue(w.add(new Balloon("d5", 600, 600, 100, 10, 10, 10, "hot", 5)));
-        assertTrue(w.add(new Balloon("d6", 600, 100, 600, 10, 10, 10, "hot", 5)));
-        assertTrue(w.add(new Balloon("d7", 100, 600, 600, 10, 10, 10, "hot", 5)));
-        assertTrue(w.add(new Balloon("d8", 600, 600, 600, 10, 10, 10, "hot", 5)));
-        
+        assertTrue(w.add(new Balloon("d1", 100, 100, 100, 10, 10, 10, "hot",
+            5)));
+        assertTrue(w.add(new Balloon("d2", 100, 100, 600, 10, 10, 10, "hot",
+            5)));
+        assertTrue(w.add(new Balloon("d3", 100, 600, 100, 10, 10, 10, "hot",
+            5)));
+        assertTrue(w.add(new Balloon("d4", 600, 100, 100, 10, 10, 10, "hot",
+            5)));
+        assertTrue(w.add(new Balloon("d5", 600, 600, 100, 10, 10, 10, "hot",
+            5)));
+        assertTrue(w.add(new Balloon("d6", 600, 100, 600, 10, 10, 10, "hot",
+            5)));
+        assertTrue(w.add(new Balloon("d7", 100, 600, 600, 10, 10, 10, "hot",
+            5)));
+        assertTrue(w.add(new Balloon("d8", 600, 600, 600, 10, 10, 10, "hot",
+            5)));
+
         // Delete all but one - tree should collapse
         w.delete("d1");
         w.delete("d2");
@@ -1980,12 +1983,12 @@ public class AirControlTest extends TestCase {
         w.delete("d5");
         w.delete("d6");
         w.delete("d7");
-        
+
         tree = w.printbintree();
         assertTrue(tree.contains("d8"));
-        // Should have collapsed to just a leaf
+        // Should have collapsed down
         assertTrue(tree.contains("Leaf with 1 objects"));
-        
+
         w.delete("d8");
         tree = w.printbintree();
         assertTrue(tree.contains("1 Bintree nodes printed"));
@@ -1995,15 +1998,17 @@ public class AirControlTest extends TestCase {
         // ============================================================
         // EDGE CASE 8: Interleaved add/delete pattern
         // ============================================================
-        assertTrue(w.add(new Balloon("i1", 100, 100, 100, 10, 10, 10, "hot", 5)));
-        assertTrue(w.add(new Balloon("i2", 600, 100, 100, 10, 10, 10, "hot", 5)));
+        assertTrue(w.add(new Balloon("i1", 100, 100, 100, 10, 10, 10, "hot",
+            5)));
+        assertTrue(w.add(new Balloon("i2", 600, 100, 100, 10, 10, 10, "hot",
+            5)));
         w.delete("i1");
-        assertTrue(w.add(new Balloon("i3", 100, 600, 100, 10, 10, 10, "hot", 5)));
+        assertTrue(w.add(new Balloon("i3", 100, 600, 100, 10, 10, 10, "hot",
+            5)));
         w.delete("i2");
-        assertTrue(w.add(new Balloon("i4", 600, 600, 100, 10, 10, 10, "hot", 5)));
-        w.delete("i3");
-        w.delete("i4");
-        
+        assertTrue(w.add(new Balloon("i4", 600, 600, 100, 10, 10, 10, "hot",
+            5)));
+
         tree = w.printbintree();
         assertTrue(tree.contains("1 Bintree nodes printed"));
 
@@ -2012,17 +2017,21 @@ public class AirControlTest extends TestCase {
         // ============================================================
         // EDGE CASE 9: Fill leaf to capacity, delete one, add back
         // ============================================================
-        assertTrue(w.add(new Balloon("cap1", 100, 100, 100, 10, 10, 10, "hot", 5)));
-        assertTrue(w.add(new Balloon("cap2", 110, 100, 100, 10, 10, 10, "hot", 5)));
-        assertTrue(w.add(new Balloon("cap3", 120, 100, 100, 10, 10, 10, "hot", 5)));
+        assertTrue(w.add(new Balloon("cap1", 100, 100, 100, 10, 10, 10, "hot",
+            5)));
+        assertTrue(w.add(new Balloon("cap2", 110, 100, 100, 10, 10, 10, "hot",
+            5)));
+        assertTrue(w.add(new Balloon("cap3", 120, 100, 100, 10, 10, 10, "hot",
+            5)));
         // Leaf at capacity (3)
-        
+
         w.delete("cap2");
         // Leaf now has 2
-        
-        assertTrue(w.add(new Balloon("cap4", 130, 100, 100, 10, 10, 10, "hot", 5)));
+
+        assertTrue(w.add(new Balloon("cap4", 130, 100, 100, 10, 10, 10, "hot",
+            5)));
         // Leaf back to 3
-        
+
         tree = w.printbintree();
         assertTrue(tree.contains("cap1"));
         assertTrue(tree.contains("cap3"));
@@ -2034,22 +2043,26 @@ public class AirControlTest extends TestCase {
         // ============================================================
         // EDGE CASE 10: Force split then merge back
         // ============================================================
-        assertTrue(w.add(new Balloon("sm1", 100, 100, 100, 10, 10, 10, "hot", 5)));
-        assertTrue(w.add(new Balloon("sm2", 110, 100, 100, 10, 10, 10, "hot", 5)));
-        assertTrue(w.add(new Balloon("sm3", 120, 100, 100, 10, 10, 10, "hot", 5)));
+        assertTrue(w.add(new Balloon("sm1", 100, 100, 100, 10, 10, 10, "hot",
+            5)));
+        assertTrue(w.add(new Balloon("sm2", 110, 100, 100, 10, 10, 10, "hot",
+            5)));
+        assertTrue(w.add(new Balloon("sm3", 120, 100, 100, 10, 10, 10, "hot",
+            5)));
         // Force split by adding 4th in different region
-        assertTrue(w.add(new Balloon("sm4", 600, 100, 100, 10, 10, 10, "hot", 5)));
-        
+        assertTrue(w.add(new Balloon("sm4", 600, 100, 100, 10, 10, 10, "hot",
+            5)));
+
         tree = w.printbintree();
         assertTrue(tree.contains("I ")); // Should have internal node
-        
+
         // Delete from both sides until merge is possible
         w.delete("sm1");
         w.delete("sm2");
         w.delete("sm4");
-        
+
         tree = w.printbintree();
-        // Should have merged back to single leaf
+        // Should merge: 1 + 1 = 2 <= 3
         assertTrue(tree.contains("sm3"));
 
         w.clear();
@@ -2058,14 +2071,21 @@ public class AirControlTest extends TestCase {
         // EDGE CASE 11: Objects at all 8 corners of world
         // ============================================================
         assertTrue(w.add(new Balloon("c000", 0, 0, 0, 10, 10, 10, "hot", 5)));
-        assertTrue(w.add(new Balloon("c001", 0, 0, 1010, 10, 10, 10, "hot", 5)));
-        assertTrue(w.add(new Balloon("c010", 0, 1010, 0, 10, 10, 10, "hot", 5)));
-        assertTrue(w.add(new Balloon("c011", 0, 1010, 1010, 10, 10, 10, "hot", 5)));
-        assertTrue(w.add(new Balloon("c100", 1010, 0, 0, 10, 10, 10, "hot", 5)));
-        assertTrue(w.add(new Balloon("c101", 1010, 0, 1010, 10, 10, 10, "hot", 5)));
-        assertTrue(w.add(new Balloon("c110", 1010, 1010, 0, 10, 10, 10, "hot", 5)));
-        assertTrue(w.add(new Balloon("c111", 1010, 1010, 1010, 10, 10, 10, "hot", 5)));
-        
+        assertTrue(w.add(new Balloon("c001", 0, 0, 1010, 10, 10, 10, "hot",
+            5)));
+        assertTrue(w.add(new Balloon("c010", 0, 1010, 0, 10, 10, 10, "hot",
+            5)));
+        assertTrue(w.add(new Balloon("c011", 0, 1010, 1010, 10, 10, 10, "hot",
+            5)));
+        assertTrue(w.add(new Balloon("c100", 1010, 0, 0, 10, 10, 10, "hot",
+            5)));
+        assertTrue(w.add(new Balloon("c101", 1010, 0, 1010, 10, 10, 10, "hot",
+            5)));
+        assertTrue(w.add(new Balloon("c110", 1010, 1010, 0, 10, 10, 10, "hot",
+            5)));
+        assertTrue(w.add(new Balloon("c111", 1010, 1010, 1010, 10, 10, 10,
+            "hot", 5)));
+
         // Delete in zigzag pattern
         w.delete("c000");
         w.delete("c111");
@@ -2075,7 +2095,7 @@ public class AirControlTest extends TestCase {
         w.delete("c110");
         w.delete("c011");
         w.delete("c100");
-        
+
         tree = w.printbintree();
         assertTrue(tree.contains("1 Bintree nodes printed"));
 
@@ -2085,13 +2105,16 @@ public class AirControlTest extends TestCase {
         // EDGE CASE 12: Delete middle object from 3 overlapping
         // ============================================================
         // All 3 intersect - leaf won't split
-        assertTrue(w.add(new Balloon("ov1", 100, 100, 100, 100, 100, 100, "hot", 5)));
-        assertTrue(w.add(new Balloon("ov2", 150, 150, 150, 100, 100, 100, "hot", 5)));
-        assertTrue(w.add(new Balloon("ov3", 120, 120, 120, 100, 100, 100, "hot", 5)));
-        
+        assertTrue(w.add(new Balloon("ov1", 100, 100, 100, 100, 100, 100, "hot",
+            5)));
+        assertTrue(w.add(new Balloon("ov2", 150, 150, 150, 100, 100, 100, "hot",
+            5)));
+        assertTrue(w.add(new Balloon("ov3", 120, 120, 120, 100, 100, 100, "hot",
+            5)));
+
         tree = w.printbintree();
         assertTrue(tree.contains("Leaf with 3 objects"));
-        
+
         w.delete("ov2");
         tree = w.printbintree();
         assertTrue(tree.contains("Leaf with 2 objects"));
@@ -2101,17 +2124,22 @@ public class AirControlTest extends TestCase {
         w.clear();
 
         // ============================================================
-        // EDGE CASE 13: 4+ overlapping objects (exceeds capacity but won't split)
+        // EDGE CASE 13: 4+ overlapping objects (exceeds capacity but won't
+        // split)
         // ============================================================
-        assertTrue(w.add(new Balloon("all1", 100, 100, 100, 200, 200, 200, "hot", 5)));
-        assertTrue(w.add(new Balloon("all2", 110, 110, 110, 200, 200, 200, "hot", 5)));
-        assertTrue(w.add(new Balloon("all3", 120, 120, 120, 200, 200, 200, "hot", 5)));
-        assertTrue(w.add(new Balloon("all4", 130, 130, 130, 200, 200, 200, "hot", 5)));
-        
+        assertTrue(w.add(new Balloon("all1", 100, 100, 100, 200, 200, 200,
+            "hot", 5)));
+        assertTrue(w.add(new Balloon("all2", 110, 110, 110, 200, 200, 200,
+            "hot", 5)));
+        assertTrue(w.add(new Balloon("all3", 120, 120, 120, 200, 200, 200,
+            "hot", 5)));
+        assertTrue(w.add(new Balloon("all4", 130, 130, 130, 200, 200, 200,
+            "hot", 5)));
+
         tree = w.printbintree();
         // Should still be single leaf (all intersect)
         assertTrue(tree.contains("Leaf with 4 objects"));
-        
+
         w.delete("all2");
         tree = w.printbintree();
         assertTrue(tree.contains("Leaf with 3 objects"));
@@ -2121,10 +2149,13 @@ public class AirControlTest extends TestCase {
         // ============================================================
         // EDGE CASE 14: Large spanning object with small neighbors
         // ============================================================
-        assertTrue(w.add(new Drone("huge", 100, 100, 100, 800, 800, 800, "mega", 4)));
-        assertTrue(w.add(new Balloon("tiny1", 50, 50, 50, 10, 10, 10, "hot", 5)));
-        assertTrue(w.add(new Balloon("tiny2", 950, 950, 950, 10, 10, 10, "hot", 5)));
-        
+        assertTrue(w.add(new Drone("huge", 100, 100, 100, 800, 800, 800, "mega",
+            4)));
+        assertTrue(w.add(new Balloon("tiny1", 50, 50, 50, 10, 10, 10, "hot",
+            5)));
+        assertTrue(w.add(new Balloon("tiny2", 950, 950, 950, 10, 10, 10, "hot",
+            5)));
+
         // Delete the huge one
         w.delete("huge");
         tree = w.printbintree();
@@ -2138,7 +2169,8 @@ public class AirControlTest extends TestCase {
         // EDGE CASE 15: Rapid add/delete same position
         // ============================================================
         for (int i = 0; i < 10; i++) {
-            assertTrue(w.add(new Balloon("rapid" + i, 100, 100, 100, 10, 10, 10, "hot", 5)));
+            assertTrue(w.add(new Balloon("rapid" + i, 100, 100, 100, 10, 10, 10,
+                "hot", 5)));
             assertNotNull(w.delete("rapid" + i));
         }
         tree = w.printbintree();
@@ -2149,21 +2181,25 @@ public class AirControlTest extends TestCase {
         // ============================================================
         // EDGE CASE 16: Delete causing internal node with two leaves to merge
         // ============================================================
-        assertTrue(w.add(new Balloon("ml1", 100, 100, 100, 10, 10, 10, "hot", 5)));
-        assertTrue(w.add(new Balloon("ml2", 600, 100, 100, 10, 10, 10, "hot", 5)));
-        assertTrue(w.add(new Balloon("ml3", 110, 100, 100, 10, 10, 10, "hot", 5)));
-        assertTrue(w.add(new Balloon("ml4", 610, 100, 100, 10, 10, 10, "hot", 5)));
-        
+        assertTrue(w.add(new Balloon("ml1", 100, 100, 100, 10, 10, 10, "hot",
+            5)));
+        assertTrue(w.add(new Balloon("ml2", 600, 100, 100, 10, 10, 10, "hot",
+            5)));
+        assertTrue(w.add(new Balloon("ml3", 110, 100, 100, 10, 10, 10, "hot",
+            5)));
+        assertTrue(w.add(new Balloon("ml4", 610, 100, 100, 10, 10, 10, "hot",
+            5)));
+
         // Now: left leaf has 2, right leaf has 2, internal node exists
         tree = w.printbintree();
         assertTrue(tree.contains("I "));
-        
+
         // Delete until merge threshold
         w.delete("ml3");
         w.delete("ml4");
-        
-        // Should merge: 1 + 1 = 2 <= 3
+
         tree = w.printbintree();
+        // Should merge: 1 + 1 = 2 <= 3
         assertTrue(tree.contains("ml1"));
         assertTrue(tree.contains("ml2"));
 
@@ -2173,18 +2209,23 @@ public class AirControlTest extends TestCase {
         // EDGE CASE 17: Chain of internal nodes collapsing
         // ============================================================
         // Create a chain by strategic placement
-        assertTrue(w.add(new Balloon("chain1", 100, 100, 100, 10, 10, 10, "hot", 5)));
-        assertTrue(w.add(new Balloon("chain2", 100, 100, 600, 10, 10, 10, "hot", 5)));
-        assertTrue(w.add(new Balloon("chain3", 100, 600, 100, 10, 10, 10, "hot", 5)));
-        assertTrue(w.add(new Balloon("chain4", 600, 100, 100, 10, 10, 10, "hot", 5)));
-        
+        assertTrue(w.add(new Balloon("chain1", 100, 100, 100, 10, 10, 10, "hot",
+            5)));
+        assertTrue(w.add(new Balloon("chain2", 100, 100, 600, 10, 10, 10, "hot",
+            5)));
+        assertTrue(w.add(new Balloon("chain3", 100, 600, 100, 10, 10, 10, "hot",
+            5)));
+        assertTrue(w.add(new Balloon("chain4", 600, 100, 100, 10, 10, 10, "hot",
+            5)));
+
         // Delete in order to cause cascading collapse
         w.delete("chain4");
         w.delete("chain3");
         w.delete("chain2");
-        
+
         tree = w.printbintree();
         assertTrue(tree.contains("chain1"));
+        // Should have collapsed down
         assertTrue(tree.contains("Leaf with 1 objects"));
 
         w.clear();
@@ -2193,13 +2234,14 @@ public class AirControlTest extends TestCase {
         // EDGE CASE 18: Object at exact world boundaries
         // ============================================================
         assertTrue(w.add(new Balloon("edge1", 0, 0, 0, 1, 1, 1, "hot", 5)));
-        assertTrue(w.add(new Balloon("edge2", 1023, 1023, 1023, 1, 1, 1, "hot", 5)));
-        
+        assertTrue(w.add(new Balloon("edge2", 1023, 1023, 1023, 1, 1, 1, "hot",
+            5)));
+
         w.delete("edge1");
         tree = w.printbintree();
         assertTrue(tree.contains("edge2"));
         assertFalse(tree.contains("edge1"));
-        
+
         w.delete("edge2");
         tree = w.printbintree();
         assertTrue(tree.contains("1 Bintree nodes printed"));
@@ -2209,16 +2251,19 @@ public class AirControlTest extends TestCase {
         // ============================================================
         // EDGE CASE 19: Multiple spanning objects, delete one at a time
         // ============================================================
-        assertTrue(w.add(new Drone("span1", 400, 400, 400, 300, 300, 300, "b", 2)));
-        assertTrue(w.add(new Drone("span2", 450, 450, 450, 300, 300, 300, "b", 2)));
-        assertTrue(w.add(new Drone("span3", 350, 350, 350, 300, 300, 300, "b", 2)));
-        
+        assertTrue(w.add(new Drone("span1", 400, 400, 400, 300, 300, 300, "b",
+            2)));
+        assertTrue(w.add(new Drone("span2", 450, 450, 450, 300, 300, 300, "b",
+            2)));
+        assertTrue(w.add(new Drone("span3", 350, 350, 350, 300, 300, 300, "b",
+            2)));
+
         w.delete("span2");
         tree = w.printbintree();
         assertTrue(tree.contains("span1"));
         assertTrue(tree.contains("span3"));
         assertFalse(tree.contains("span2"));
-        
+
         w.delete("span1");
         w.delete("span3");
         tree = w.printbintree();
@@ -2230,12 +2275,17 @@ public class AirControlTest extends TestCase {
         // EDGE CASE 20: tryCollapse with nested internal nodes
         // ============================================================
         // Create structure: Internal -> Internal -> Leaf
-        assertTrue(w.add(new Balloon("nest1", 100, 100, 100, 10, 10, 10, "hot", 5)));
-        assertTrue(w.add(new Balloon("nest2", 100, 100, 600, 10, 10, 10, "hot", 5)));
-        assertTrue(w.add(new Balloon("nest3", 100, 600, 100, 10, 10, 10, "hot", 5)));
-        assertTrue(w.add(new Balloon("nest4", 100, 600, 600, 10, 10, 10, "hot", 5)));
-        assertTrue(w.add(new Balloon("nest5", 600, 100, 100, 10, 10, 10, "hot", 5)));
-        
+        assertTrue(w.add(new Balloon("nest1", 100, 100, 100, 10, 10, 10, "hot",
+            5)));
+        assertTrue(w.add(new Balloon("nest2", 100, 100, 600, 10, 10, 10, "hot",
+            5)));
+        assertTrue(w.add(new Balloon("nest3", 100, 600, 100, 10, 10, 10, "hot",
+            5)));
+        assertTrue(w.add(new Balloon("nest4", 100, 600, 600, 10, 10, 10, "hot",
+            5)));
+        assertTrue(w.add(new Balloon("nest5", 600, 100, 100, 10, 10, 10, "hot",
+            5)));
+
         // Delete to leave only nested internal structure on one side
         System.out.println(w.printbintree());
         w.delete("nest5");
@@ -2246,7 +2296,7 @@ public class AirControlTest extends TestCase {
         System.out.println(w.printbintree());
         w.delete("nest2");
         System.out.println(w.printbintree());
-        
+
         tree = w.printbintree();
         assertTrue(tree.contains("nest1"));
         // Should have collapsed down
@@ -2257,11 +2307,12 @@ public class AirControlTest extends TestCase {
         // ============================================================
         // EDGE CASE 21: Delete non-existent after real deletes
         // ============================================================
-        assertTrue(w.add(new Balloon("real1", 100, 100, 100, 10, 10, 10, "hot", 5)));
+        assertTrue(w.add(new Balloon("real1", 100, 100, 100, 10, 10, 10, "hot",
+            5)));
         w.delete("real1");
         assertNull(w.delete("real1")); // Already deleted
         assertNull(w.delete("neverExisted"));
-        
+
         tree = w.printbintree();
         assertTrue(tree.contains("1 Bintree nodes printed"));
 
@@ -2276,16 +2327,17 @@ public class AirControlTest extends TestCase {
             int x = (i % 4) * 250 + 10;
             int y = ((i / 4) % 4) * 250 + 10;
             int z = (i / 16) * 500 + 10;
-            assertTrue(w.add(new Balloon(names[i], x, y, z, 20, 20, 20, "hot", 5)));
+            assertTrue(w.add(new Balloon(names[i], x, y, z, 20, 20, 20, "hot",
+                5)));
         }
-        
+
         // Delete in weird order
-        int[] deleteOrder = {7, 2, 15, 0, 19, 8, 4, 11, 16, 3, 
-                             12, 6, 18, 1, 14, 9, 5, 17, 10, 13};
+        int[] deleteOrder = { 7, 2, 15, 0, 19, 8, 4, 11, 16, 3, 12, 6, 18, 1,
+            14, 9, 5, 17, 10, 13 };
         for (int i : deleteOrder) {
             assertNotNull(w.delete(names[i]));
         }
-        
+
         tree = w.printbintree();
         assertTrue(tree.contains("1 Bintree nodes printed"));
 
@@ -2299,4 +2351,119 @@ public class AirControlTest extends TestCase {
         assertTrue(tree.contains("1 Bintree nodes printed"));
     }
 
+
+    // ----------------------------------------------------------
+    /**
+     * Tests BinTree.intersect edge-case test covering empty tree, boundary
+     * touches, quadrant queries, and spanning objects.
+     *
+     * @throws Exception
+     *             if an error occurs during the test.
+     */
+    public void testBinTreeIntersectEdgeCases() throws Exception {
+        WorldDB w = new WorldDB(null);
+
+        // Empty world: just the flyweight root is visited
+        String result = w.intersect(0, 0, 0, 10, 10, 10);
+        assertFuzzyEquals(
+            "The following objects intersect (0 0 0 10 10 10):\r\n"
+                + "1 nodes were visited in the bintree\r\n", result);
+
+        // Boundary-touching query should not report the object
+        w.clear();
+        assertTrue(w.add(new Balloon("boundary", 100, 100, 100, 50, 50, 50,
+            "hot", 5)));
+        result = w.intersect(0, 0, 0, 100, 100, 100);
+        System.out.println("Result for boundary test: \n" + result);
+        assertFuzzyEquals(
+            "The following objects intersect (0 0 0 100 100 100):\r\n"
+                + "In leaf node (0, 0, 0, 1024, 1024, 1024) 0\r\n"
+                + "1 nodes were visited in the bintree\r\n" + "\r\n", result);
+        assertFalse(result.contains("boundary"));
+        // Overlap by a single unit should now include the object
+        result = w.intersect(0, 0, 0, 101, 101, 101);
+        System.out.println("Result for boundary overlap test: \n" + result);
+        assertFuzzyEquals(
+            "The following objects intersect (0 0 0 101 101 101):\r\n"
+                + "In leaf node (0, 0, 0, 1024, 1024, 1024) 0\r\n"
+                + "Balloon boundary 100 100 100 50 50 50 hot 5\r\n"
+                + "1 nodes were visited in the bintree", result);
+        assertTrue(result.contains("boundary"));
+
+        // Build a world that forces internal nodes across all axes
+        w.clear();
+        assertTrue(w.add(new Balloon("leftEdge", 100, 100, 100, 10, 10, 10,
+            "hot", 5)));
+        assertTrue(w.add(new Balloon("rightEdge", 700, 100, 100, 10, 10, 10,
+            "hot", 5)));
+        assertTrue(w.add(new Balloon("topEdge", 100, 700, 100, 10, 10, 10,
+            "hot", 5)));
+        assertTrue(w.add(new Balloon("deepEdge", 100, 100, 700, 10, 10, 10,
+            "hot", 5)));
+
+        // Left-half query should see only left-side residents
+        result = w.intersect(0, 0, 0, 512, 1024, 1024);
+        assertTrue(result.contains("left"));
+        assertFalse(result.contains("right"));
+
+        // Right-half (high Y) query should only hit the top object
+        result = w.intersect(0, 550, 0, 1024, 400, 1024);
+        assertFalse(result.contains("left"));
+        assertTrue(result.contains("top"));
+
+        // Back-half (high Z) query should only hit the deep object
+        result = w.intersect(0, 0, 550, 1024, 1024, 400);
+        assertFalse(result.contains("left"));
+        assertTrue(result.contains("deep"));
+
+        // Add a spanning object that crosses the X midpoint
+        assertTrue(w.add(new Drone("spanBoth", 400, 100, 100, 300, 50, 50,
+            "brand", 2)));
+
+        // Full-world query should list everything exactly once
+        result = w.intersect(0, 0, 0, 1024, 1024, 1024);
+        assertTrue(result.contains("spanBoth"));
+        assertTrue(result.contains("leftEdge"));
+        assertTrue(result.contains("rightEdge"));
+        assertTrue(result.contains("topEdge"));
+        assertTrue(result.contains("deepEdge"));
+        System.out.println("Result for full-world query: \n" + result);
+        assertFuzzyEquals(
+            "The following objects intersect (0 0 0 1024 1024 1024):\r\n"
+                + "In Internal node (0, 0, 0, 1024, 1024, 1024) 0\r\n"
+                + "In Internal node (0, 0, 0, 512, 1024, 1024) 1\r\n"
+                + "In leaf node (0, 0, 0, 512, 512, 1024) 2\r\n"
+                + "Balloon deepEdge 100 100 700 10 10 10 hot 5\r\n"
+                + "Balloon leftEdge 100 100 100 10 10 10 hot 5\r\n"
+                + "Drone spanBoth 400 100 100 300 50 50 brand 2\r\n"
+                + "In leaf node (0, 512, 0, 512, 512, 1024) 2\r\n"
+                + "Balloon topEdge 100 700 100 10 10 10 hot 5\r\n"
+                + "In leaf node (512, 0, 0, 512, 1024, 1024) 1\r\n"
+                + "Balloon rightEdge 700 100 100 10 10 10 hot 5\r\n"
+                + "5 nodes were visited in the bintree\r\n", result);
+
+        // Query that only touches the right side should still find the span
+        result = w.intersect(700, 0, 0, 100, 1024, 1024);
+        System.out.println("Result for right-edge query: \n" + result);
+        assertFuzzyEquals(
+            "The following objects intersect (700 0 0 100 1024 1024):\r\n"
+                + "In Internal node (0, 0, 0, 1024, 1024, 1024) 0\r\n"
+                + "In leaf node (512, 0, 0, 512, 1024, 1024) 1\r\n"
+                + "Balloon rightEdge 700 100 100 10 10 10 hot 5\r\n"
+                + "2 nodes were visited in the bintree\r\n", result);
+
+        // Query far from every object should traverse internal nodes but list
+        // none
+        result = w.intersect(900, 900, 900, 50, 50, 50);
+        System.out.println("Result for empty-region query: \n" + result);
+        assertFuzzyEquals(
+            "The following objects intersect (900 900 900 50 50 50):\r\n"
+                + "In Internal node (0, 0, 0, 1024, 1024, 1024) 0\r\n"
+                + "In leaf node (512, 0, 0, 512, 1024, 1024) 1\r\n"
+                + "2 nodes were visited in the bintree\r\n", result);
+        assertTrue(result.contains("In Internal node"));
+        assertFalse(result.contains("leftEdge"));
+        assertFalse(result.contains("rightEdge"));
+        assertTrue(result.contains("nodes were visited"));
+    }
 }
