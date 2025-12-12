@@ -54,31 +54,22 @@ public class WorldDB implements ATC {
      * @return True iff the AirObject is successfully entered into the database
      */
     public boolean add(AirObject a) {
-        if (
-        // ---------- General AirObject validation ----------
-        a.getName() == null || a.getName().isEmpty() || a.getXOrg() < 0 || a
+        if (a.getName() == null || a.getName().isEmpty() || a.getXOrg() < 0 || a
             .getYOrg() < 0 || a.getZOrg() < 0 || a.getXOrg() + a
                 .getXWidth() > worldSize || a.getYOrg() + a
                     .getYWidth() > worldSize || a.getZOrg() + a
-                        .getZWidth() > worldSize
-        // widths must be strictly positive
-            || a.getXWidth() <= 0 || a.getYWidth() <= 0 || a.getZWidth() <= 0
-            // ---------- Balloon ----------
+                        .getZWidth() > worldSize || a.getXWidth() <= 0 || a
+                            .getYWidth() <= 0 || a.getZWidth() <= 0
             || (a instanceof Balloon && (((Balloon)a).getType() == null
-                || ((Balloon)a).getAscentRate() < 0))
-            // ---------- AirPlane ----------
-            || (a instanceof AirPlane && (((AirPlane)a).getAirline() == null
-                || ((AirPlane)a).getNumEngines() <= 0 || ((AirPlane)a)
-                    .getFlightNumber() <= 0))
-            // ---------- Drone ----------
-            || (a instanceof Drone && (((Drone)a).getBrand() == null
-                || ((Drone)a).getNumEngines() <= 0))
-            // ---------- Bird ----------
+                || ((Balloon)a).getAscentRate() < 0)) || (a instanceof AirPlane
+                    && (((AirPlane)a).getAirline() == null || ((AirPlane)a)
+                        .getNumEngines() <= 0 || ((AirPlane)a)
+                            .getFlightNumber() <= 0)) || (a instanceof Drone
+                                && (((Drone)a).getBrand() == null || ((Drone)a)
+                                    .getNumEngines() <= 0))
             || (a instanceof Bird && (((Bird)a).getType() == null || ((Bird)a)
-                .getNumber() <= 0))
-            // ---------- Rocket ----------
-            || (a instanceof Rocket && (((Rocket)a).getAscentRate() < 0
-                || ((Rocket)a).getTrajectory() < 0))) {
+                .getNumber() <= 0)) || (a instanceof Rocket && (((Rocket)a)
+                    .getAscentRate() < 0 || ((Rocket)a).getTrajectory() < 0))) {
             return false;
         }
 
