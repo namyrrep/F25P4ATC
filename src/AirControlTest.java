@@ -1220,20 +1220,56 @@ public class AirControlTest extends TestCase {
             + "9 Bintree nodes printed", tree);
         // spansBoth should appear in multiple leaves (both left and right
         // subtrees)
-        int count = 0;
-        int idx = 0;
-        while ((idx = tree.indexOf("spansBoth", idx)) != -1) {
-            count++;
-            idx++;
-        }
-        assertTrue("Spanning object should appear in at least 2 leaves",
-            count >= 2);
-
-        w.delete("leftOnly1");
-        w.delete("leftOnly2");
-        w.delete("leftOnly3");
-        w.delete("rightOnly");
         w.delete("spansBoth");
+        tree = w.printbintree();
+        System.out.println(tree);
+        // Reference implementation output with 9 nodes
+        assertFuzzyEquals("I (0, 0, 0, 1024, 1024, 1024) 0\r\n"
+        		+ "  Leaf with 3 objects (0, 0, 0, 512, 1024, 1024) 1\r\n"
+        		+ "  (Balloon leftOnly1 100 100 100 50 50 50 hot 5)\r\n"
+        		+ "  (Balloon leftOnly2 150 100 100 50 50 50 hot 5)\r\n"
+        		+ "  (Balloon leftOnly3 200 100 100 50 50 50 hot 5)\r\n"
+        		+ "  Leaf with 1 objects (512, 0, 0, 512, 1024, 1024) 1\r\n"
+        		+ "  (Balloon rightOnly 600 100 100 50 50 50 hot 5)\r\n"
+        		+ "3 Bintree nodes printed", tree);
+        
+        assertTrue(w.add(new Drone("spansBoth", 400, 100, 100, 300, 50, 50,
+                "brand", 2)));
+        w.delete("leftOnly2");
+        tree = w.printbintree();
+        System.out.println(tree);
+        
+        assertFuzzyEquals("I (0, 0, 0, 1024, 1024, 1024) 0\r\n"
+        		+ "  Leaf with 3 objects (0, 0, 0, 512, 1024, 1024) 1\r\n"
+        		+ "  (Balloon leftOnly1 100 100 100 50 50 50 hot 5)\r\n"
+        		+ "  (Balloon leftOnly3 200 100 100 50 50 50 hot 5)\r\n"
+        		+ "  (Drone spansBoth 400 100 100 300 50 50 brand 2)\r\n"
+        		+ "  Leaf with 2 objects (512, 0, 0, 512, 1024, 1024) 1\r\n"
+        		+ "  (Balloon rightOnly 600 100 100 50 50 50 hot 5)\r\n"
+        		+ "  (Drone spansBoth 400 100 100 300 50 50 brand 2)\r\n"
+        		+ "3 Bintree nodes printed", tree);
+        
+        assertTrue(w.add(new Balloon("leftOnly2", 150, 100, 100, 50, 50, 50,
+                "hot", 5)));
+        w.delete("rightOnly");
+        tree = w.printbintree();
+        System.out.println(tree);
+        
+        assertFuzzyEquals("I (0, 0, 0, 1024, 1024, 1024) 0\r\n"
+        		+ "  I (0, 0, 0, 512, 1024, 1024) 1\r\n"
+        		+ "    I (0, 0, 0, 512, 512, 1024) 2\r\n"
+        		+ "      I (0, 0, 0, 512, 512, 512) 3\r\n"
+        		+ "        Leaf with 3 objects (0, 0, 0, 256, 512, 512) 4\r\n"
+        		+ "        (Balloon leftOnly1 100 100 100 50 50 50 hot 5)\r\n"
+        		+ "        (Balloon leftOnly2 150 100 100 50 50 50 hot 5)\r\n"
+        		+ "        (Balloon leftOnly3 200 100 100 50 50 50 hot 5)\r\n"
+        		+ "        Leaf with 1 objects (256, 0, 0, 256, 512, 512) 4\r\n"
+        		+ "        (Drone spansBoth 400 100 100 300 50 50 brand 2)\r\n"
+        		+ "      E (0, 0, 512, 512, 512, 512) 3\r\n"
+        		+ "    E (0, 512, 0, 512, 512, 1024) 2\r\n"
+        		+ "  Leaf with 1 objects (512, 0, 0, 512, 1024, 1024) 1\r\n"
+        		+ "  (Drone spansBoth 400 100 100 300 50 50 brand 2)\r\n"
+        		+ "9 Bintree nodes printed", tree);
     }
 
 
