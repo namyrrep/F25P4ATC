@@ -1201,13 +1201,23 @@ public class AirControlTest extends TestCase {
 
         tree = w.printbintree();
         System.out.println(tree);
-        // Just verify structure contains expected objects and structure indicators
-        assertTrue(tree.contains("I ")); // Has internal node
-        assertTrue(tree.contains("leftOnly1"));
-        assertTrue(tree.contains("leftOnly2"));
-        assertTrue(tree.contains("leftOnly3"));
-        assertTrue(tree.contains("rightOnly"));
-        assertTrue(tree.contains("spansBoth"));
+        // Reference implementation output with 9 nodes
+        assertFuzzyEquals("I (0, 0, 0, 1024, 1024, 1024) 0\r\n"
+            + "  I (0, 0, 0, 512, 1024, 1024) 1\r\n"
+            + "    I (0, 0, 0, 512, 512, 1024) 2\r\n"
+            + "      I (0, 0, 0, 512, 512, 512) 3\r\n"
+            + "        Leaf with 3 objects (0, 0, 0, 256, 512, 512) 4\r\n"
+            + "        (Balloon leftOnly1 100 100 100 50 50 50 hot 5)\r\n"
+            + "        (Balloon leftOnly2 150 100 100 50 50 50 hot 5)\r\n"
+            + "        (Balloon leftOnly3 200 100 100 50 50 50 hot 5)\r\n"
+            + "        Leaf with 1 objects (256, 0, 0, 256, 512, 512) 4\r\n"
+            + "        (Drone spansBoth 400 100 100 300 50 50 brand 2)\r\n"
+            + "      E (0, 0, 512, 512, 512, 512) 3\r\n"
+            + "    E (0, 512, 0, 512, 512, 1024) 2\r\n"
+            + "  Leaf with 2 objects (512, 0, 0, 512, 1024, 1024) 1\r\n"
+            + "  (Balloon rightOnly 600 100 100 50 50 50 hot 5)\r\n"
+            + "  (Drone spansBoth 400 100 100 300 50 50 brand 2)\r\n"
+            + "9 Bintree nodes printed", tree);
         // spansBoth should appear in multiple leaves (both left and right
         // subtrees)
         int count = 0;
@@ -1248,7 +1258,6 @@ public class AirControlTest extends TestCase {
         assertTrue(w.add(new Balloon("rem4", 100, 100, 600, 10, 10, 10, "hot",
             5)));
         String treeBefore = w.printbintree();
-        System.out.println(treeBefore);
         assertFuzzyEquals("I (0, 0, 0, 1024, 1024, 1024) 0\r\n"
             + "  Leaf with 3 objects (0, 0, 0, 512, 1024, 1024) 1\r\n"
             + "  (Balloon rem1 100 100 100 10 10 10 hot 5)\r\n"
@@ -1262,7 +1271,6 @@ public class AirControlTest extends TestCase {
         // levels
         assertNotNull(w.delete("rem2")); // Right side of X axis
         String tree = w.printbintree();
-        System.out.println(tree);
         assertFuzzyEquals(
             "Leaf with 3 objects (0, 0, 0, 1024, 1024, 1024) 0\r\n"
                 + "(Balloon rem1 100 100 100 10 10 10 hot 5)\r\n"
@@ -1273,7 +1281,6 @@ public class AirControlTest extends TestCase {
 
         assertNotNull(w.delete("rem3")); // High Y axis
         tree = w.printbintree();
-        System.out.println(tree);
         assertFuzzyEquals(
             "Leaf with 2 objects (0, 0, 0, 1024, 1024, 1024) 0\r\n"
                 + "(Balloon rem1 100 100 100 10 10 10 hot 5)\r\n"
@@ -1283,7 +1290,7 @@ public class AirControlTest extends TestCase {
 
         assertNotNull(w.delete("rem4")); // Back Z axis
         tree = w.printbintree();
-        System.out.println(tree);
+        ;
         assertFuzzyEquals(
             "Leaf with 1 objects (0, 0, 0, 1024, 1024, 1024) 0\r\n"
                 + "(Balloon rem1 100 100 100 10 10 10 hot 5)\r\n"
@@ -1292,7 +1299,7 @@ public class AirControlTest extends TestCase {
 
         assertNotNull(w.delete("rem1")); // Last one
         tree = w.printbintree();
-        System.out.println(tree);
+        ;
         assertFuzzyEquals("E (0, 0, 0, 1024, 1024, 1024) 0\r\n"
             + "1 Bintree nodes printed", tree);
         assertTrue(tree.contains("E (0, 0, 0, 1024, 1024, 1024) 0"));
@@ -1324,7 +1331,6 @@ public class AirControlTest extends TestCase {
 
         // Verify we have an internal node
         String tree = w.printbintree();
-        System.out.println(tree);
         assertTrue(tree.contains("I "));
         assertTrue(tree.contains("keeper1"));
         assertTrue(tree.contains("keeper2"));
@@ -1358,7 +1364,6 @@ public class AirControlTest extends TestCase {
         assertNotNull(w.delete("spanning"));
 
         String treeAfter = w.printbintree();
-        System.out.println(treeAfter);
         // Verify spanning is removed but keepers remain
         assertTrue(treeAfter.contains("keeper1"));
         assertTrue(treeAfter.contains("keeper2"));
@@ -1398,7 +1403,6 @@ public class AirControlTest extends TestCase {
             "hot", 5)));
 
         String treeBefore = w.printbintree();
-        System.out.println(treeBefore);
         assertFuzzyEquals("I (0, 0, 0, 1024, 1024, 1024) 0\r\n"
             + "  Leaf with 3 objects (0, 0, 0, 512, 1024, 1024) 1\r\n"
             + "  (Balloon leftSide1 100 100 100 10 10 10 hot 5)\r\n"
@@ -1415,7 +1419,6 @@ public class AirControlTest extends TestCase {
         w.delete("leftSide3");
 
         String treeAfter = w.printbintree();
-        System.out.println(treeAfter);
         assertFuzzyEquals(
             "Leaf with 1 objects (0, 0, 0, 1024, 1024, 1024) 0\r\n"
                 + "(Balloon rightSide 600 100 100 10 10 10 hot 5)\r\n"

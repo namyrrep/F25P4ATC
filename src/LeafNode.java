@@ -32,11 +32,13 @@ public final class LeafNode extends BinNode {
 
         objects.add(obj);
 
+        // Don't split if 3 or fewer objects, or if region can't be split further
         if (objects.getSize() <= CAPACITY || region.isUnit()) {
             return this;
         }
 
-        if (cannotSplit(region, level)) {
+        // Don't split if all objects share a common intersection point
+        if (allIntersect()) {
             return this;
         }
 
@@ -133,50 +135,28 @@ public final class LeafNode extends BinNode {
 
 
     /**
-     * Checks if splitting would help separate objects on the current axis.
-     * Returns true if splitting would NOT help - meaning all objects
-     * would end up in the same child(ren) after splitting.
-     * This allows leaves to grow infinitely when objects are at the same position.
+     * Checks if all objects in this leaf share a common intersection point.
+     * Two 3D boxes intersect if they overlap in all three dimensions.
+     * All objects share a common point if every pair of objects intersects.
+     * 
+     * @return true if all objects pairwise intersect, false otherwise.
      */
-    private boolean cannotSplit(Region region, int level) {
-        int axis = level % 3;
-        int midpoint = region.midpoint(axis);
-        
-        boolean hasLeftOnly = false;
-        boolean hasRightOnly = false;
-        boolean hasSpanning = false;
-        
+    private boolean allIntersect() {
+        // Convert to array for indexed access
+        AirObject[] arr = new AirObject[objects.getSize()];
+        int i = 0;
         for (AirObject obj : objects) {
-            int objStart = BinTree.getAxisStart(obj, axis);
-            int objEnd = BinTree.getAxisEnd(obj, axis);
-            
-            boolean goesLeft = objStart < midpoint;
-            boolean goesRight = objEnd > midpoint;
-            
-            if (goesLeft && goesRight) {
-                hasSpanning = true;
-            }
-            else if (goesLeft) {
-                hasLeftOnly = true;
-            } 
-            else if (goesRight) {
-                hasRightOnly = true;
-            }
+            arr[i++] = obj;
         }
         
-        // Splitting helps if we have objects going to different sides:
-        // 1. Some left-only and some right-only (they get separated)
-        // 2. Some exclusive (left or right only) and some spanning 
-        //    (exclusive stays on one side, spanning goes to both)
-        if (hasLeftOnly && hasRightOnly) {
-            return false; // Can split
+        // Check all pairs
+        for (i = 0; i < arr.length; i++) {
+            for (int j = i + 1; j < arr.length; j++) {
+                if (!BinNode.intersects(arr[i], arr[j])) {
+                    return false;
+                }
+            }
         }
-        if (hasSpanning && (hasLeftOnly || hasRightOnly)) {
-            return false; // Can split
-        }
-        
-        // All objects go to the same place(s), splitting won't help
-        // (all left-only, all right-only, or all spanning)
         return true;
     }
 

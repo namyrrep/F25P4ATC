@@ -161,12 +161,8 @@ public final class InternalNode extends BinNode {
             .append("\n");
         int nodes = 1;
         int axis = level % 3;
-        if (!(left instanceof FlyweightNode)) {
-            nodes += left.print(buffer, region.leftChild(axis), level + 1);
-        }
-        if (!(right instanceof FlyweightNode)) {
-            nodes += right.print(buffer, region.rightChild(axis), level + 1);
-        }
+        nodes += left.print(buffer, region.leftChild(axis), level + 1);
+        nodes += right.print(buffer, region.rightChild(axis), level + 1);
         return nodes;
     }
 
