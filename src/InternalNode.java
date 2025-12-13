@@ -78,17 +78,12 @@ public final class InternalNode extends BinNode {
         }
 
         // Attempt to collapse child subtrees into leaves when they became small
-        if (left instanceof InternalNode) {
-            left = tryCollapseSubtree((InternalNode)left);
-        }
-        if (right instanceof InternalNode) {
-            right = tryCollapseSubtree((InternalNode)right);
-        }
-
-        // Collapse to flyweight if both sides are empty
-        if (left instanceof FlyweightNode && right instanceof FlyweightNode) {
-            return FlyweightNode.getInstance();
-        }
+//        if (left instanceof InternalNode) {
+//            left = tryCollapseSubtree((InternalNode)left);
+//        }
+//        if (right instanceof InternalNode) {
+//            right = tryCollapseSubtree((InternalNode)right);
+//        }
 
         // Collapse to single leaf if one side is empty
         if (left instanceof LeafNode && right instanceof FlyweightNode) {
@@ -127,52 +122,54 @@ public final class InternalNode extends BinNode {
         // Collect all unique objects from the subtree
         java.util.Set<String> seenNames = new java.util.HashSet<>();
         java.util.List<AirObject> allObjects = new java.util.ArrayList<>();
-        collectObjects(internal, allObjects, seenNames);
-        
+//        collectObjects(internal, allObjects, seenNames);
+
         // If 3 or fewer unique objects, create a single leaf
-        if (allObjects.size() <= 3) {
-            LeafNode merged = new LeafNode();
-            for (AirObject obj : allObjects) {
-                merged.addObject(obj);
-            }
-            return merged;
-        }
-        
+// if (allObjects.size() <= 3) {
+// LeafNode merged = new LeafNode();
+// for (AirObject obj : allObjects) {
+// merged.addObject(obj);
+// }
+// return merged;
+// }
+
         // Can't collapse, return the internal node as-is
         return internal;
     }
 
 
-    /**
-     * Recursively collects all unique objects from a subtree.
-     * 
-     * @param node
-     *            The current node.
-     * @param objects
-     *            The list to add objects to.
-     * @param seenNames
-     *            Set of names already seen (to avoid duplicates).
-     */
-    private void collectObjects(BinNode node, java.util.List<AirObject> objects,
-        java.util.Set<String> seenNames) {
-        if (node instanceof FlyweightNode) {
-            return;
-        }
-        if (node instanceof LeafNode) {
-            LeafNode leaf = (LeafNode)node;
-            for (AirObject obj : leaf.getObjects()) {
-                if (!seenNames.contains(obj.getName())) {
-                    seenNames.add(obj.getName());
-                    objects.add(obj);
-                }
-            }
-        }
-        else if (node instanceof InternalNode) {
-            InternalNode internal = (InternalNode)node;
-            collectObjects(internal.left, objects, seenNames);
-            collectObjects(internal.right, objects, seenNames);
-        }
-    }
+//    /**
+//     * Recursively collects all unique objects from a subtree.
+//     * 
+//     * @param node
+//     *            The current node.
+//     * @param objects
+//     *            The list to add objects to.
+//     * @param seenNames
+//     *            Set of names already seen (to avoid duplicates).
+//     */
+//    private void collectObjects(
+//        BinNode node,
+//        java.util.List<AirObject> objects,
+//        java.util.Set<String> seenNames) {
+//        if (node instanceof FlyweightNode) {
+//            return;
+//        }
+//        if (node instanceof LeafNode) {
+//            LeafNode leaf = (LeafNode)node;
+//            for (AirObject obj : leaf.getObjects()) {
+//                // if (!seenNames.contains(obj.getName())) {
+//                seenNames.add(obj.getName());
+//                objects.add(obj);
+//                // }
+//            }
+//        }
+//        else {
+//            InternalNode internal = (InternalNode)node;
+//            collectObjects(internal.left, objects, seenNames);
+//            collectObjects(internal.right, objects, seenNames);
+//        }
+//    }
 
 
     /**
@@ -277,13 +274,12 @@ public final class InternalNode extends BinNode {
      */
     @Override
     public int collisions(StringBuilder sb, Region region, int level) {
-        int collisionCount = 0;
         int axis = level % 3;
-        collisionCount += left.collisions(sb, region.leftChild(axis), level
-            + 1);
-        collisionCount += right.collisions(sb, region.rightChild(axis), level
-            + 1);
-        return collisionCount;
+        Region leftRegion = region.leftChild(axis);
+        Region rightRegion = region.rightChild(axis);
+        int leftCollisions = left.collisions(sb, leftRegion, level + 1);
+        int rightCollisions = right.collisions(sb, rightRegion, level + 1);
+        return leftCollisions + rightCollisions;
     }
 
 
@@ -327,13 +323,11 @@ public final class InternalNode extends BinNode {
         int axis = level % 3;
         Region leftRegion = region.leftChild(axis);
         Region rightRegion = region.rightChild(axis);
-        if (!(left instanceof FlyweightNode) && regionIntersectsQuery(
-            leftRegion, qx, qy, qz, qxw, qyw, qzw)) {
+        if (regionIntersectsQuery(leftRegion, qx, qy, qz, qxw, qyw, qzw)) {
             nodesVisited += left.intersect(sb, leftRegion, level + 1, qx, qy,
                 qz, qxw, qyw, qzw);
         }
-        if (!(right instanceof FlyweightNode) && regionIntersectsQuery(
-            rightRegion, qx, qy, qz, qxw, qyw, qzw)) {
+        if (regionIntersectsQuery(rightRegion, qx, qy, qz, qxw, qyw, qzw)) {
             nodesVisited += right.intersect(sb, rightRegion, level + 1, qx, qy,
                 qz, qxw, qyw, qzw);
         }

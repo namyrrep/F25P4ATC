@@ -1227,21 +1227,44 @@ public class AirControlTest extends TestCase {
             + "9 Bintree nodes printed", tree);
         // spansBoth should appear in multiple leaves (both left and right
         // subtrees)
-        int count = 0;
-        int idx = 0;
-        while ((idx = tree.indexOf("spansBoth", idx)) != -1) {
-            count++;
-            idx++;
-        }
-        assertTrue("Spanning object should appear in at least 2 leaves",
-            count >= 2);
 
-        // Clean up
-        w.delete("leftOnly1");
-        w.delete("leftOnly2");
-        w.delete("leftOnly3");
-        w.delete("rightOnly");
-        w.delete("spansBoth");
+        tree = w.intersect(0, 0, 0, 1024, 1024, 1024);
+        System.out.println(tree);
+        assertFuzzyEquals(
+            "The following objects intersect (0 0 0 1024 1024 1024):\r\n"
+                + "In Internal node (0, 0, 0, 1024, 1024, 1024) 0\r\n"
+                + "In Internal node (0, 0, 0, 512, 1024, 1024) 1\r\n"
+                + "In Internal node (0, 0, 0, 512, 512, 1024) 2\r\n"
+                + "In Internal node (0, 0, 0, 512, 512, 512) 3\r\n"
+                + "In leaf node (0, 0, 0, 256, 512, 512) 4\r\n"
+                + "Balloon leftOnly1 100 100 100 50 50 50 hot 5\r\n"
+                + "Balloon leftOnly2 150 100 100 50 50 50 hot 5\r\n"
+                + "Balloon leftOnly3 200 100 100 50 50 50 hot 5\r\n"
+                + "In leaf node (256, 0, 0, 256, 512, 512) 4\r\n"
+                + "Drone spansBoth 400 100 100 300 50 50 brand 2\r\n"
+                + "In leaf node (512, 0, 0, 512, 1024, 1024) 1\r\n"
+                + "Balloon rightOnly 600 100 100 50 50 50 hot 5\r\n"
+                + "9 nodes were visited in the bintree", tree);
+
+        tree = w.intersect(0, 0, 0, 512, 1024, 1024);
+        System.out.println(tree);
+        assertFuzzyEquals(
+            "The following objects intersect (0 0 0 512 1024 1024):\r\n"
+                + "In Internal node (0, 0, 0, 1024, 1024, 1024) 0\r\n"
+                + "In Internal node (0, 0, 0, 512, 1024, 1024) 1\r\n"
+                + "In Internal node (0, 0, 0, 512, 512, 1024) 2\r\n"
+                + "In Internal node (0, 0, 0, 512, 512, 512) 3\r\n"
+                + "In leaf node (0, 0, 0, 256, 512, 512) 4\r\n"
+                + "Balloon leftOnly1 100 100 100 50 50 50 hot 5\r\n"
+                + "Balloon leftOnly2 150 100 100 50 50 50 hot 5\r\n"
+                + "Balloon leftOnly3 200 100 100 50 50 50 hot 5\r\n"
+                + "In leaf node (256, 0, 0, 256, 512, 512) 4\r\n"
+                + "Drone spansBoth 400 100 100 300 50 50 brand 2\r\n"
+                + "8 nodes were visited in the bintree", tree);
+
+        tree = w.intersect(512, 0, 0, 1024, 1024, 1024);
+        System.out.println(tree);
+        assertNull(tree);
     }
 
 

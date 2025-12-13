@@ -104,14 +104,21 @@ public class Region {
     }
 
 
-//    /**
-//     * Checks if the region is a unit cube.
-//     * 
-//     * @return True if it is a unit cube.
-//     */
-//    public boolean isUnit() {
-//        return xWidth <= 1 && yWidth <= 1 && zWidth <= 1;
-//    }
+    /**
+     * Checks if the region contains the given point.
+     * 
+     * @param px
+     *            The x coordinate of the point.
+     * @param py
+     *            The y coordinate of the point.
+     * @param pz
+     *            The z coordinate of the point.
+     * @return True if the region contains the point.
+     */
+    public boolean contains(int px, int py, int pz) {
+        return px >= x && px < x + xWidth && py >= y && py < y + yWidth
+            && pz >= z && pz < z + zWidth;
+    }
 
 
     @Override

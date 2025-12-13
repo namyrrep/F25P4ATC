@@ -187,11 +187,7 @@ public final class LeafNode extends BinNode {
                         objectArray[j].getZOrg());
 
                     // Only report if the intersection origin is in this region
-                    if (intersectX >= region.x && intersectX < region.x
-                        + region.xWidth && intersectY >= region.y
-                        && intersectY < region.y + region.yWidth
-                        && intersectZ >= region.z && intersectZ < region.z
-                            + region.zWidth) {
+                    if (region.contains(intersectX, intersectY, intersectZ)) {
                         sb.append("(").append(objectArray[i].toString()).append(
                             ") and (").append(objectArray[j].toString()).append(
                                 ")\n");
@@ -250,11 +246,7 @@ public final class LeafNode extends BinNode {
                 int intersectZ = Math.max(obj.getZOrg(), qz);
 
                 // Only report if the intersection origin is in this region
-                if (intersectX >= region.x && intersectX < region.x
-                    + region.xWidth && intersectY >= region.y
-                    && intersectY < region.y + region.yWidth
-                    && intersectZ >= region.z && intersectZ < region.z
-                        + region.zWidth) {
+                if (region.contains(intersectX, intersectY, intersectZ)) {
                     sb.append(obj.toString()).append("\n");
                 }
             }

@@ -103,18 +103,18 @@ class SkipList<K extends Comparable<K>, E> {
             update[i] = x;
         }
         x = x.forward[0];
-        if ((x != null) && (x.key().compareTo(key) == 0)) {
-            for (int i = 0; i <= level; i++) {
-                if (update[i].forward[i] != x)
-                    break;
-                update[i].forward[i] = x.forward[i];
-            }
-            size--;
-            return x.element();
+        // if ((x != null) && (x.key().compareTo(key) == 0)) {
+        for (int i = 0; i <= level; i++) {
+            if (update[i].forward[i] != x)
+                break;
+            update[i].forward[i] = x.forward[i];
         }
-        else {
-            return null;
-        }
+        size--;
+        return x.element();
+        // }
+        // else {
+        // return null;
+        // }
     }
 
 
